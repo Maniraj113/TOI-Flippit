@@ -1,0 +1,186 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+
+/* ─── Brand Tokens ─── */
+:root {
+  --brand: #a30000;
+  --brand-dark: #7a0000;
+  --gold: #f5a623;
+  --gold-end: #e8621a;
+  --white-10: rgba(255,255,255,0.10);
+  --white-15: rgba(255,255,255,0.15);
+  --white-30: rgba(255,255,255,0.30);
+  --white-60: rgba(255,255,255,0.60);
+}
+
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ─── App Shell ─── */
+#app-shell {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--brand);
+}
+
+/* ─── Top Bar (all secondary screens) ─── */
+.top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+  height: 72px;
+}
+
+.top-bar img.logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+/* ─── Glass Card ─── */
+.card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--white-15);
+  border-radius: 28px;
+  padding: 32px 24px;
+  width: 100%;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ─── Gold Button ─── */
+.btn-gold {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 24px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #000;
+  background: linear-gradient(135deg, #ffd700, var(--gold-end));
+  box-shadow: 0 16px 40px rgba(245,166,35,0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-gold:active { transform: scale(0.96); box-shadow: 0 8px 20px rgba(245,166,35,0.3); }
+.btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Ghost Button ─── */
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 100px;
+  border: 1px solid var(--white-30);
+  background: transparent;
+  color: var(--white-60);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+/* ─── Input ─── */
+.field {
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  border: 1.5px solid var(--white-15);
+  border-radius: 16px;
+  padding: 18px 20px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field:focus { border-color: #ffd700; }
+.field::placeholder { color: rgba(255,255,255,0.30); font-weight: 400; }
+
+/* ─── Stat Tile ─── */
+.stat-tile {
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--white-10);
+  border-radius: 20px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.stat-tile .label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--white-30);
+  text-transform: uppercase;
+}
+.stat-tile .value {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+/* ─── How-To Badge ─── */
+.how-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--white-15);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white-60);
+  letter-spacing: 0.08em;
+}
+
+/* ─── Timer Pill ─── */
+.timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--white-15);
+  border-radius: 100px;
+  padding: 10px 20px;
+  font-family: 'Inter', monospace;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
