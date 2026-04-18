@@ -634,10 +634,12 @@ export default function FlippitApp() {
               onStart={async () => {
                 const saved = typeof window !== "undefined" ? localStorage.getItem("session") : null;
                 if (!saved) {
+                  console.log("🔒 [LOCK] No session found. Going to login.");
                   setScreen("login");
                 } else {
                   const d = JSON.parse(saved);
                   if (!d.id || !d.token) {
+                    console.log("🔒 [LOCK] Malformed session. Going to login.");
                     setScreen("login");
                     return;
                   }
@@ -648,20 +650,21 @@ export default function FlippitApp() {
                     console.log(`🔒 [LOCK] Checking daily lock for user: ${d.id} | Today (IST): ${todayIST}`);
                     
                     const stats = await flippitApi.getUserStats(d.id, isDebug);
-                    console.log("🔒 [LOCK] Raw stats response:", JSON.stringify(stats, null, 2));
+                    console.log("🔒 [LOCK] Raw data received:", JSON.stringify(stats, null, 2));
                     
-                    // Exhaustive log extraction
+                    // Exhaustive log extraction covering multiple possible API response structures
                     const logs = stats.gameLogs || stats.data?.gameLogs || stats.data?.data?.gameLogs || stats.logs || [];
-                    console.log(`🔒 [LOCK] Extracted ${logs.length} logs. Searching for matches on ${todayIST}...`);
+                    console.log(`🔒 [LOCK] Analyzing ${logs.length} total logs...`);
                     
                     let alreadyPlayed = null;
                     for (const log of logs) {
-                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp);
-                      const logStatus = (log.status || log.Status || "").toLowerCase();
+                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp || log.updated_at);
+                      const logStatus = (log.status || log.Status || "completed").toLowerCase(); // Default to completed if score exists
                       const logScore = Number(log.score || log.Score || 0);
-                      
-                      console.log(`   - Checking log: Date=${logDateIST}, Status=${logStatus}, Score=${logScore}`);
-                      
+
+                      console.log(`   - Log item: Date=${logDateIST}, Status=${logStatus}, Score=${logScore}`);
+
+                      // If match found for today and it's a valid attempt (success/completed)
                       if ((logStatus === "completed" || logStatus === "success") && logDateIST === todayIST) {
                         alreadyPlayed = log;
                         break;
@@ -669,7 +672,7 @@ export default function FlippitApp() {
                     }
                     
                     if (alreadyPlayed) {
-                      console.log("🔒 [LOCK] SUCCESS: Redirecting to result page.");
+                      console.log("🔒 [LOCK] MATCH DETECTED. Forcing redirect to Result Screen.");
                       setScoreData({
                         score: alreadyPlayed.score || 0,
                         timeTaken: alreadyPlayed.time_taken || alreadyPlayed.TimeTaken || 0,
@@ -684,7 +687,7 @@ export default function FlippitApp() {
                       });
                       setScreen("result");
                     } else {
-                      console.log("🔒 [LOCK] NO MATCH: Proceeding to game/register.");
+                      console.log("🔒 [LOCK] NO TODAY LOG FOUND. Allowed to play.");
                       if (!d.name || d.name === "Test" || d.name === "Test User") {
                         setScreen("register");
                       } else {
@@ -692,8 +695,8 @@ export default function FlippitApp() {
                       }
                     }
                   } catch (e) {
-                    console.error("🔒 [LOCK] CRITICAL ERROR:", e);
-                    setScreen("game"); // Safe fallback
+                    console.error("🔒 [LOCK] API Error during verification:", e);
+                    setScreen("game"); // Safe fallback if API is unreachable
                   } finally {
                     setLoading(false);
                   }
@@ -739,15 +742,15 @@ export default function FlippitApp() {
 
                   try {
                     const todayIST = getISTDateString();
-                    console.log(`🔒 [LOCK-POST-OTP] Checking logs for user: ${s.id} | Today: ${todayIST}`);
+                    console.log(`🔒 [LOCK-POST-OTP] Verifying lock for user: ${s.id} | Today: ${todayIST}`);
                     const stats = await flippitApi.getUserStats(s.id, isDebug);
-                    console.log("🔒 [LOCK-POST-OTP] Raw stats:", JSON.stringify(stats, null, 2));
+                    console.log("🔒 [LOCK-POST-OTP] Raw Data:", JSON.stringify(stats, null, 2));
                     
                     const logs = stats.gameLogs || stats.data?.gameLogs || stats.data?.data?.gameLogs || stats.logs || [];
                     let alreadyPlayed = null;
                     for (const log of logs) {
-                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp);
-                      const logStatus = (log.status || log.Status || "").toLowerCase();
+                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp || log.updated_at);
+                      const logStatus = (log.status || log.Status || "completed").toLowerCase();
                       if ((logStatus === "completed" || logStatus === "success") && logDateIST === todayIST) {
                         alreadyPlayed = log;
                         break;
@@ -755,7 +758,7 @@ export default function FlippitApp() {
                     }
 
                     if (alreadyPlayed) {
-                      console.log("🔒 [LOCK-POST-OTP] MATCH FOUND: Redirecting to result.");
+                      console.log("🔒 [LOCK-POST-OTP] DAILY LOCK TRIGGERED. Redirecting to Result.");
                       setScoreData({
                         score: alreadyPlayed.score || 0,
                         timeTaken: alreadyPlayed.time_taken || alreadyPlayed.TimeTaken || 0,
@@ -771,8 +774,9 @@ export default function FlippitApp() {
                       setScreen("result");
                       return; 
                     }
+                    console.log("🔒 [LOCK-POST-OTP] No locks found. Good to go.");
                   } catch (e) {
-                    console.error("🔒 [LOCK-POST-OTP] ERROR:", e);
+                    console.error("🔒 [LOCK-POST-OTP] LOG READ ERROR:", e);
                   }
                   
                   if (res.UserName && res.UserName !== "Test" && res.UserName !== "Test User") {
