@@ -644,25 +644,35 @@ export default function FlippitApp() {
                   
                   try {
                     setLoading(true);
-                    console.log("Checking daily lock for user:", d.id);
+                    const todayIST = getISTDateString();
+                    console.log(`🔒 [LOCK] Checking daily lock for user: ${d.id} | Today (IST): ${todayIST}`);
+                    
                     const stats = await flippitApi.getUserStats(d.id, isDebug);
-                    console.log("Stats response:", stats);
+                    console.log("🔒 [LOCK] Raw stats response:", JSON.stringify(stats, null, 2));
                     
-                    const todayIST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-                    const logs = stats.gameLogs || stats.data?.gameLogs || [];
+                    // Exhaustive log extraction
+                    const logs = stats.gameLogs || stats.data?.gameLogs || stats.data?.data?.gameLogs || stats.logs || [];
+                    console.log(`🔒 [LOCK] Extracted ${logs.length} logs. Searching for matches on ${todayIST}...`);
                     
-                    const alreadyPlayed = logs.find((l: GameLog) => {
-                      if (!l.created_at) return false;
-                      const logDateIST = new Date(l.created_at).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-                      const status = (l.status || "").toLowerCase();
-                      return (status === "completed" || status === "success") && logDateIST === todayIST;
-                    });
+                    let alreadyPlayed = null;
+                    for (const log of logs) {
+                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp);
+                      const logStatus = (log.status || log.Status || "").toLowerCase();
+                      const logScore = Number(log.score || log.Score || 0);
+                      
+                      console.log(`   - Checking log: Date=${logDateIST}, Status=${logStatus}, Score=${logScore}`);
+                      
+                      if ((logStatus === "completed" || logStatus === "success") && logDateIST === todayIST) {
+                        alreadyPlayed = log;
+                        break;
+                      }
+                    }
                     
                     if (alreadyPlayed) {
-                      console.log("User already played today. Redirecting to result.");
+                      console.log("🔒 [LOCK] SUCCESS: Redirecting to result page.");
                       setScoreData({
                         score: alreadyPlayed.score || 0,
-                        timeTaken: alreadyPlayed.time_taken || 0,
+                        timeTaken: alreadyPlayed.time_taken || alreadyPlayed.TimeTaken || 0,
                         streak: stats.streak || stats.data?.streak || 1,
                         bestStreak: stats.bestStreak || stats.data?.bestStreak || 1,
                         accuracy: 100,
@@ -673,14 +683,17 @@ export default function FlippitApp() {
                         msgBottom: "You've already flipped it today. Come back tomorrow for a fresh challenge!"
                       });
                       setScreen("result");
-                    } else if (!d.name || d.name === "Test" || d.name === "Test User") {
-                      setScreen("register");
                     } else {
-                      setScreen("game");
+                      console.log("🔒 [LOCK] NO MATCH: Proceeding to game/register.");
+                      if (!d.name || d.name === "Test" || d.name === "Test User") {
+                        setScreen("register");
+                      } else {
+                        setScreen("game");
+                      }
                     }
                   } catch (e) {
-                    console.error("Lock Check Error:", e);
-                    setScreen("game"); // Fallback
+                    console.error("🔒 [LOCK] CRITICAL ERROR:", e);
+                    setScreen("game"); // Safe fallback
                   } finally {
                     setLoading(false);
                   }
@@ -724,37 +737,42 @@ export default function FlippitApp() {
                   localStorage.setItem("session", JSON.stringify(s)); 
                   setSessionData(s);
 
-                  // ROBUST DAILY LOCK CHECK (IST TIMEZONE)
-                  console.log("Checking daily lock for user after OTP:", s.id);
-                  const stats = await flippitApi.getUserStats(s.id, isDebug);
-                  console.log("Stats response after OTP:", stats);
-                  
-                  const todayIST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }); 
-                  const logs = stats.gameLogs || stats.data?.gameLogs || [];
-                  
-                  const alreadyPlayed = logs.find((l: GameLog) => {
-                    if (!l.created_at) return false;
-                    const logDateIST = new Date(l.created_at).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-                    const status = (l.status || "").toLowerCase();
-                    return (status === "completed" || status === "success") && logDateIST === todayIST;
-                  });
- 
-                  if (alreadyPlayed) {
-                    console.log("User already played today (post-OTP). Redirecting to result.");
-                    setScoreData({
-                      score: alreadyPlayed.score || 0,
-                      timeTaken: alreadyPlayed.time_taken || 0,
-                      streak: stats.streak || stats.data?.streak || 1,
-                      bestStreak: stats.bestStreak || stats.data?.bestStreak || 1,
-                      accuracy: 100,
-                      totalFlips: alreadyPlayed.score > 0 ? Math.round(alreadyPlayed.score / 10) : 0,
-                      winRate: 100,
-                      rank: (alreadyPlayed.score || 0) >= 80 ? "GOLD" : ((alreadyPlayed.score || 0) >= 50 ? "SILVER" : "BRONZE"),
-                      msgTop: "STILL GOING STRONG!",
-                      msgBottom: "You've already flipped it today. See you tomorrow!"
-                    });
-                    setScreen("result");
-                    return; 
+                  try {
+                    const todayIST = getISTDateString();
+                    console.log(`🔒 [LOCK-POST-OTP] Checking logs for user: ${s.id} | Today: ${todayIST}`);
+                    const stats = await flippitApi.getUserStats(s.id, isDebug);
+                    console.log("🔒 [LOCK-POST-OTP] Raw stats:", JSON.stringify(stats, null, 2));
+                    
+                    const logs = stats.gameLogs || stats.data?.gameLogs || stats.data?.data?.gameLogs || stats.logs || [];
+                    let alreadyPlayed = null;
+                    for (const log of logs) {
+                      const logDateIST = getISTDateString(log.created_at || log.Date || log.timestamp);
+                      const logStatus = (log.status || log.Status || "").toLowerCase();
+                      if ((logStatus === "completed" || logStatus === "success") && logDateIST === todayIST) {
+                        alreadyPlayed = log;
+                        break;
+                      }
+                    }
+
+                    if (alreadyPlayed) {
+                      console.log("🔒 [LOCK-POST-OTP] MATCH FOUND: Redirecting to result.");
+                      setScoreData({
+                        score: alreadyPlayed.score || 0,
+                        timeTaken: alreadyPlayed.time_taken || alreadyPlayed.TimeTaken || 0,
+                        streak: stats.streak || stats.data?.streak || 1,
+                        bestStreak: stats.bestStreak || stats.data?.bestStreak || 1,
+                        accuracy: 100,
+                        totalFlips: alreadyPlayed.score > 0 ? Math.round(alreadyPlayed.score / 10) : 0,
+                        winRate: 100,
+                        rank: (alreadyPlayed.score || 0) >= 80 ? "GOLD" : ((alreadyPlayed.score || 0) >= 50 ? "SILVER" : "BRONZE"),
+                        msgTop: "STILL GOING STRONG!",
+                        msgBottom: "You've already flipped it today. See you tomorrow!"
+                      });
+                      setScreen("result");
+                      return; 
+                    }
+                  } catch (e) {
+                    console.error("🔒 [LOCK-POST-OTP] ERROR:", e);
                   }
                   
                   if (res.UserName && res.UserName !== "Test" && res.UserName !== "Test User") {
