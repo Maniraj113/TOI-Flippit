@@ -1,0 +1,13 @@
+# Dependencies
+flippit-next/node_modules/
+flippit-next/.next/
+flippit-next/out/
+flippit-next/build/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

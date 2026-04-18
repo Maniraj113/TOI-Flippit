@@ -1,0 +1,27 @@
+
+Beat the clock is missing 
+
+Change number should be icon in otp page
+
+button color should be brown color in all the screens
+
+you might just make it to the pages of TOI in the name page
+
+Game link : https://cdn-in.amuselabs.com/nexus/date-picker?idx=1&set=nexus-toi-synant-puzzles
+
+ACTULA OTP is not coming
+
+how the data is coming from api - need to investigate
+
+try another should not be visible in trophy page
+
+all text are required in trophy page in mobile but shared card should not show the text
+
+both bottom & top msges based on time solved. 
+
+Name should be editable. 
+
+identify all api and its results. 
+
+Name & location.
+
