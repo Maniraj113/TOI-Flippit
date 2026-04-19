@@ -9,122 +9,63 @@ This document details the API endpoints used by the Flippit Game. The applicatio
 ## 1. Authentication APIs (Proxy)
 
 ### Send OTP
-Generates and sends a 4-digit OTP to the user's mobile number via AWS SNS/Pinpoint.
-
-- **Endpoint**: `POST /api/otp/send`
+- **Proxy Endpoint (Code)**: `POST /api/otp/send`
+- **Backend URL**: `POST https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com/send-otp`
 - **Request Body**:
   ```json
-  {
-    "phone": "9876543210"
-  }
-  ```
-- **Response (Success)**:
-  ```json
-  {
-    "message": "OTP sent successfully",
-    "requestId": "uuid"
-  }
-  ```
-- **Response (Error)**:
-  ```json
-  {
-    "error": "Failed to send OTP"
-  }
+  { "phone": "9876543210" }
   ```
 
 ### Verify OTP
-Validates the OTP and returns user session details.
-
-- **Endpoint**: `POST /api/otp/verify`
+- **Proxy Endpoint (Code)**: `POST /api/otp/verify`
+- **Backend URL**: `POST https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com/verify-otp`
 - **Request Body**:
   ```json
-  {
-    "phone": "9876543210",
-    "otp": "1234"
-  }
-  ```
-- **Response (Success)**:
-  ```json
-  {
-    "UserId": "user_123",
-    "token": "jwt_auth_token",
-    "FirstTimeUser": true
-  }
-  ```
-- **Response (Invalid OTP)**:
-  ```json
-  {
-    "message": "Invalid OTP",
-    "status": "failure"
-  }
+  { "phone": "9876543210", "otp": "1234" }
   ```
 
 ---
 
 ## 2. User & Game Progress APIs (AWS Backend)
 
-**Base URL**: `https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com`  
-**Authorization**: All POST requests (except Verify) require clinical Bearer tokens: `Authorization: Bearer <token>`
-
 ### Save User Details
-Registers the user's name after first-time login.
-
-- **Endpoint**: `POST /save-user`
+- **Proxy Endpoint (Code)**: `POST /api/save-user`
+- **Backend URL**: `POST https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com/save-user`
+- **Authorization**: `Bearer <token>`
 - **Request Body**:
   ```json
-  {
-    "user_name": "John Doe"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "message": "User saved successfully"
-  }
+  { "user_name": "John Doe" }
   ```
 
 ### Save Game Result
-Saves the score and metrics at the end of a game session.
-
-- **Endpoint**: `POST /save-game`
+- **Proxy Endpoint (Code)**: `POST /api/save-game`
+- **Backend URL**: `POST https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com/save-game`
+- **Authorization**: `Bearer <token>`
 - **Request Body**:
   ```json
   {
+    "user_id": 30,
+    "g_id": "eec36aba",
+    "city": "TOIIN",
     "score": 85,
-    "time_taken": 12,
-    "status": "completed",
-    "wrong_attempts": 3,
-    "correct_matches": 8
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "message": "Game result saved",
-    "game_id": "g_987"
+    "time_taken": 45,
+    "status": "completed"
   }
   ```
 
 ### Get User Stats (Daily Lock Check)
-Retrieves the history of the user to determine if they have already played today.
-
-- **Endpoint**: `GET /user/{userId}`
-- **Response**:
+- **Proxy Endpoint (Code)**: `GET /api/user/{userId}`
+- **Backend URL**: `GET https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com/user/{userId}`
+- **Response Structure**:
   ```json
   {
-    "data": {
-      "user_id": "user_123",
-      "user_name": "John Doe",
-      "gameLogs": [
-        {
-          "g_id": "g_987",
-          "score": 85,
-          "time_taken": 12,
-          "status": "completed",
-          "created_at": "2026-04-18T10:00:00Z"
-        }
-      ]
-    }
+    "user": {
+      "id": 30,
+      "user_name": "Maniraj Audit",
+      "hash_id": "9f76794c-b502-4101-9acc-afa693c5682f",
+      ...
+    },
+    "gameLogs": [ ... ]
   }
   ```
 
