@@ -219,8 +219,8 @@
     }
 
     #generic-header img {
-      height: 120px;
-      width: auto;
+      width: 280px;
+      height: auto;
       filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
     }
 
@@ -237,7 +237,7 @@
     }
 
     #game-header img {
-      height: 64px;
+      height: 48px;
       width: auto;
       filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
     }
@@ -298,8 +298,7 @@
     }
 
     #screen-splash .logo-wrap img {
-      width: 100%;
-      max-width: 280px;
+      width: 280px;
       height: auto;
     }
 
@@ -517,8 +516,8 @@
     }
 
     .result-logo {
-      height: 60px;
-      width: auto;
+      width: 280px;
+      height: auto;
       margin-bottom: 30px;
       filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
     }
@@ -756,7 +755,8 @@
       left: -9999px;
       width: 1080px;
       height: 1080px;
-      background: #8B0000; /* Deep red */
+      background: #8B0000;
+      /* Deep red */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -770,23 +770,26 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 30px; /* Reduced space */
+      margin-bottom: 30px;
+      /* Reduced space */
     }
 
     .cap-flippit-logo {
-      width: 400px; /* Scaled down */
+      width: 400px;
+      /* Scaled down */
       height: auto;
     }
 
     .cap-by-line {
-      color: rgba(255,255,255,0.8);
+      color: rgba(255, 255, 255, 0.8);
       font-size: 24px;
       font-weight: 500;
       margin: 10px 0;
     }
 
     .cap-toi-logo {
-      width: 240px; /* Scaled down */
+      width: 240px;
+      /* Scaled down */
       filter: brightness(0) invert(1);
     }
 
@@ -795,7 +798,7 @@
       background: var(--brand-salmon);
       border-radius: 56px;
       padding: 45px 50px;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
       gap: 35px;
@@ -803,51 +806,63 @@
 
     .cap-top-section {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      gap: 20px;
+      text-align: center;
+      margin-bottom: 30px;
     }
 
-    .cap-meta-group {
+    .cap-user-row {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      gap: 15px;
     }
 
     .cap-username-badge {
       font-size: 20px;
       font-weight: 800;
       color: #540000;
-      opacity: 0.5;
+      opacity: 0.6;
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
+    .cap-on-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: #540000;
+      opacity: 0.4;
+      text-transform: uppercase;
+    }
+
     .cap-catchy-title {
-      font-size: 56px;
+      font-size: 48px;
       font-weight: 900;
       color: #540000;
       margin: 0;
       letter-spacing: -0.01em;
+      line-height: 1.1;
     }
 
     .cap-cal-box {
-      width: 100px;
-      height: 110px;
+      width: 70px;
+      height: 75px;
       background: white;
-      border-radius: 18px;
+      border-radius: 12px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .cap-cal-head {
       background: #DE3E3E;
       color: white;
-      font-size: 16px;
+      font-size: 11px;
       font-weight: 900;
       text-align: center;
-      padding: 5px 0;
+      padding: 3px 0;
       text-transform: uppercase;
     }
 
@@ -856,7 +871,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 44px;
+      font-size: 32px;
       font-weight: 900;
       color: #333;
       line-height: 1;
@@ -994,15 +1009,15 @@
 
       <div class="cap-main-box">
         <div class="cap-top-section">
-          <div class="cap-meta-group">
+          <div class="cap-user-row">
             <div class="cap-username-badge"><span id="cc-name-node">PLAYER</span>'S FLIPPED IT CARD</div>
-            <h2 class="cap-catchy-title">HOW ABOUT YOU?</h2>
+            <div class="cap-on-text">ON</div>
+            <div class="cap-cal-box">
+              <div class="cap-cal-head" id="cc-cal-m">...</div>
+              <div class="cap-cal-body" id="cc-cal-d">..</div>
+            </div>
           </div>
-          
-          <div class="cap-cal-box">
-            <div class="cap-cal-head" id="cc-cal-m">APR</div>
-            <div class="cap-cal-body" id="cc-cal-d">20</div>
-          </div>
+          <h2 class="cap-catchy-title">HOW ABOUT YOU?</h2>
         </div>
 
         <div class="cap-tiles-grid">
@@ -1014,12 +1029,13 @@
               </svg>
               <div class="cap-tile-label">SOLVED IN</div>
             </div>
-            <div class="cap-tile-value"><span id="cc-time">0</span><span class="cap-tile-suffix">s</span></div>
+            <div class="cap-tile-value"><span id="cc-time">0</span><span class="cap-tile-suffix">sec</span></div>
           </div>
           <div class="cap-result-tile">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
               <svg class="cap-tile-icon" viewBox="0 0 24 24" fill="#FACC15">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                <path
+                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
               </svg>
               <div class="cap-tile-label">SCORE</div>
             </div>
@@ -1171,9 +1187,9 @@
     <div id="screen-result" class="screen">
       <div class="result-inner fade-in">
         <img class="result-logo" src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Logo">
-        
+
         <div class="result-card">
-          <button class="btn-close-result" onclick="UI.showScreen('splash')">✕</button>
+
           <div class="result-msg-top" id="result-msg-top">You nailed it!</div>
 
           <div class="stats-grid">
@@ -1191,7 +1207,8 @@
             <div class="stat-tile">
               <div class="stat-icon-up">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="#FACC15">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                  <path
+                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                 </svg>
               </div>
               <div class="stat-label-small">Your Score</div>
@@ -1211,10 +1228,12 @@
 
         <!-- Testing Mode Buttons -->
         <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-          <button id="replay-btn" style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
+          <button id="replay-btn"
+            style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
             RE-PLAY (TEST MODE)
           </button>
-          <button id="edit-name-test-btn" style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
+          <button id="edit-name-test-btn"
+            style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
             EDIT NAME (TEST MODE)
           </button>
         </div>
