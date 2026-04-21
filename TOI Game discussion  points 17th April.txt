@@ -1,5 +1,5 @@
 
-Beat the clock is missing 
+Beat the clock is missing in landing page
 
 Change number should be icon in otp page
 
