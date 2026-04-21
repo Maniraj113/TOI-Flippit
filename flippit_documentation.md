@@ -9,134 +9,94 @@ Flippit is a high-engagement, branded digital game experience for **The Times of
 
 ### Phase 1: Entry & Awareness
 - **QR Entry**: User scans a QR code in the TOI newspaper.
+- **URL Parameters**: The URL contains `city` (or `c`) and `date` (or `d`).
+- **Date Check**: The app validates the `date` parameter against the current **IST (Asia/Kolkata)** date. If they don't match, the user is shown an "Expired QR" screen.
 - **Landing Page**: User lands on the Splash Screen.
 - **Session Check**:
-  - If a session (name + token) exists in `localStorage`, the user is greeted and can click **"LET'S START"** to go directly to the **Game Page**.
+  - If a session (id + token + name) exists in `localStorage`, the user clicks **"LET'S START"**, triggering a `checkDailyLock`.
   - If no session exists, the user is directed to the **Login Phase**.
 
-### Phase 2: Authentication (New Users)
+### Phase 2: Authentication (New/Expired Session)
 - **Mobile Input**: User enters a 10-digit mobile number.
-- **OTP Delivery**: App sends an OTP via a bridge API.
+- **OTP Delivery**: App sends an OTP via the `/send-otp` bridge API.
 - **OTP Verification**:
   - User enters the 6-digit code.
-  - **Auto-fill**: (Planned) Using `autocomplete="one-time-code"` for one-click entry on mobile.
+  - **Auto-verify**: Verification triggers automatically once the 6th digit is entered.
+  - **Resend**: A 30-second cooldown timer prevents OTP flooding.
 - **Identity Check**:
-  - If the user is found in the system (Existing User), they proceed to the **Game Page**.
-  - If not found (New User), they are prompted to enter their **Name** before starting.
-- **Daily Lock Implementation**: After OTP verification, if the system detects the user has already played for the day, they should be redirected to the **Result Page** instead of the game, even if in Incognito.
+  - If `FirstTimeUser` is true or `UserName` is missing, users proceed to the **Registration Screen**.
+  - Otherwise, they proceed to `checkDailyLock`.
 
-### Phase 3: The Game
-- **Puzzle Loading**: The game (via AmuseLabs iframe) loads.
-- **Countdown**: A 60-second timer starts as soon as the puzzle is ready.
-- **Engagement**: User interacts with the custom "Flippit" board.
+### Phase 3: The Game & Daily Lock
+- **Daily Lock**: The app calls `getUserStats`.
+  - If a "completed" game is found for today, the user is moved directly to the **Result Screen**.
+  - If a "pending" game is found and is < 60 seconds old, the game resumes.
+  - If a "pending" game is > 60 seconds old, or an "expired" log exists, the user is moved to the **Expired Screen**.
+- **Puzzle Loading**: The game (via AmuseLabs iframe) loads. A `PUZZLE_LOAD` event captures the dynamic `puzzleId`.
+- **Countdown**: A 60-second timer starts. The badge pulses and turns red in the last few seconds.
 - **Completion**: Score is calculated based on performance and remaining time.
 
 ### Phase 4: Results & Sharing
-- **Result Screen**: Displays Solve Time, Score, Total Flips, Win Rate, and Streaks.
-- **Trophy Card**: A high-resolution shareable image (1080x1080) is generated using `html2canvas`.
-- **Sharing**: Native mobile sharing allows users to post their results on WhatsApp, Instagram, or download the image.
+- **Result Screen**: Displays "Mission Accomplished!" (or similar based on speed), Solved Time, and Score.
+- **Expired/Timeout Screen**: A dedicated screen with an alarm clock icon and a "Sad Face" badge for users who ran out of time or used an old QR.
+- **Trophy Card**: A high-fidelity shareable image generated using `html2canvas` on a hidden vertical card layout.
+- **Sharing**: Native mobile sharing for WhatsApp, Instagram, etc.
 
 ---
 
-## 3. API Reference
+## 3. API Reference (AWS Gateway)
 
-### Internal Bridge APIs (Next.js Routes)
-| Endpoint | Method | Purpose |
-| :--- | :--- | :--- |
-| `/api/otp/send` | `POST` | Triggers OTP delivery to the provided mobile number. |
-| `/api/otp/verify` | `POST` | Validates the OTP and returns `UserId`, `UserName`, and `Token`. |
+**Base URL:** `https://zr84sznqb5.execute-api.ap-south-1.amazonaws.com`
 
-### Backend API (AWS Gateway)
-| Endpoint | Method | Authorization | Purpose |
+| Endpoint | Method | Params / Body | Purpose |
 | :--- | :--- | :--- | :--- |
-| `/verify-otp` | `POST` | None | Core verification logic (called by the internal bridge). |
-| `/save-user` | `POST` | Bearer Token | Updates the user's profile Display Name. |
-| `/save-game` | `POST` | Bearer Token | Persists game results (Score, Time, City/Location). |
-| `/user/{userId}` | `GET` | None | Retrieves user game logs and lifetime statistics. |
+| `/send-otp` | `POST` | `{ "phone": "10-digits" }` | Sends OTP to the device. |
+| `/verify-otp` | `POST` | `{ "phone", "otp" }` | Returns `UserId`, `UserName`, `token`, `FirstTimeUser`. |
+| `/save-user` | `POST` | `{ "user_name" }` | Updates the user's display name (Bearer auth). |
+| `/save-game` | `POST` | `{ "g_id", "status", "score", "time_taken", "city" }` | Logs game state (pending/completed/expired). |
+| `/user/{userId}`| `GET` | Headers: `Authorization` | Retrieves user game logs and lifetime statistics. |
 
 ---
 
 ## 4. Business Rules & Logic
 
-### 1. Game Ranking System
-Based on the final score, the user is assigned a rank:
-- **GOLD**: Score ≥ 80
-- **SILVER**: Score ≥ 50
-- **BRONZE**: Score < 50
+### 1. Typography (Design System)
+The application uses a unified font system: **Gotham** (local). Fallback is **Inter**. All headers and body text use this system to ensure a premium, branded feel.
 
-### 2. Win Rate Calculation
-The win rate is a performance metric calculated relative to the time spent:
-- `WinRate = 100 - (TimeSpent / 60) * 10` (clamped at 100%).
+### 2. Time-Based Messaging
+The success message on the result page varies by solve time:
+- **1–20s**: "Fastest fingers in town!"
+- **21–35s**: "You're on fire!"
+- **36–50s**: "You crushed it!"
+- **51–60s**: "Mission accomplished!"
 
-### 3. Quick Result / High Performance
-If a user solves the puzzle extremely fast (e.g., < 15s), the UI should prioritize celebratory feedback and "Gold" ranking animations.
+### 3. Expiry Messages
+Randomized messages for timeout/expired states (e.g., "Oops! This flip flopped. Try again tomorrow...").
 
-### 4. Session Persistence
-Sessions are stored in `localStorage`. If a user clears their cache or uses Incognito, the OTP verification step acts as the source of truth for retrieving their existing history.
+### 4. Dynamic Game ID
+Captured from the `PUZZLE_LOAD` iframe message (`event.data.id`) ensures accurate tracking across different daily puzzles.
 
----
-
-## 5. Identified UX Improvements & Support Reduction
-
-To ensure a "World Class" experience and minimize support queries, the following improvements are recommended:
-
-1. **OTP Autofill (Critical)**:
-   - Add `autocomplete="one-time-code"` to the OTP input.
-   - Implement the **WebOTP API** so the browser automatically detects the SMS and offers a "Paste" button.
-
-2. **Google Analytics & Location**:
-   - Integrate `gtag.js` or `react-ga4`.
-   - Use the Geolocation API (with user permission) or an IP-to-Location service to capture the user's City (Delhi, Mumbai, etc.) for localized leaderboards.
-
-3. **Visual Feedback**:
-   - **Loading States**: Add a skeleton loader for the AmuseLabs iframe to prevent a "white flash" while the game loads.
-   - **Haptic Feedback**: Add subtle vibrations on mobile when letters are flipped or when the timer hits its last 5 seconds.
-
-4. **Support Buffering**:
-   - **"Help" Floating Button**: A small bubble leading to a "Rules" modal to avoid frustration.
-   - **Error Handling**: Clearer error messages (e.g., "Invalid OTP. Please wait 30s to resend").
+### 5. Test Mode
+Enabled via `?test=true`. It bypasses the daily lock and date validation, displaying a red "TEST MODE ACTIVATED" banner.
 
 ---
 
-## 6. Important Missing Points & Recommendations
+## 5. UI Components & UX
 
-- **Environment Consistency**: Ensure `BASE_URL` is managed via `.env` variables (Development vs. Production).
-- **Security**: Implement Rate Limiting on the OTP endpoints to prevent SMS flooding/abuse.
-- **Cache Management**: The sharing image (`TrophyCard`) is currently hidden with `-9999` positioning. For better performance, it should only be rendered to the DOM when the "Share" button is clicked.
-- **PWA Support**: Converting the app to a Progressive Web App (PWA) would allow users to "Install" it, improving retention and daily play.
+- **Pill Stats**: Statistics on the result and trophy card are presented in split-pill layouts (Left: Label/Icon, Right: Value) with high-contrast brown backgrounds.
+- **Trophy Card Aesthetics**: High-fidelity, vertical orientation (600x700 viewport) featuring auto-scaling for player names to ensure single-line fits.
+- **Mobile responsiveness**: Inputs are constrained (max-width 240px for mobile input) for better focus and 1-tap interaction.
+
+---
+
+## 6. Comprehensive State Scenarios
+
+- **Scenario A (New)**: `Splash` -> `Login` -> `OTP` -> `Register` -> `Game` -> `Result`
+- **Scenario B (Returning)**: `Splash` -> `Game` (if no game today)
+- **Scenario C (Locked)**: `Splash` -> `Result` (if already played today)
+- **Scenario D (Expired)**: `Splash` -> `Expired Screen` (if QR is old or user timed out previously)
+- **Scenario E (Timeout)**: `Game` -> `Timer hits 0` -> `Expired Screen`
 
 ---
 
-## 7. Comprehensive Application Logic & State Scenarios
-
-To maintain a robust user experience, the system handles the following scenarios dynamically:
-
-### Scenario A: New User (First Time Entry)
-- **Path**: `Splash` -> `Login` -> `OTP` -> `Register` -> `Game` -> `Result`
-- **Result**: New entry created in DB; session (ID, Token, Name) stored in `localStorage`.
-
-### Scenario B: Returning User (Next Day)
-- **Path**: `Splash` -> `Session Check` -> `Game` -> `Result`
-- **Condition**: `localStorage` has name/token, and server confirms no game played *today*.
-
-### Scenario C: Returning User (Already Played Today - Local Session)
-- **Path**: `Splash` -> `LET'S START` -> `Daily Lock Check` -> **FORCED REDIRECT** -> `Result`
-- **Logic**: Even if the user has a valid session, the system calls `getUserStats` on splash click. If a "completed" log exists for the current date in **IST (Asia/Kolkata)**, the user is sent straight to the results of their previous session.
-
-### Scenario D: Returning User (Already Played Today - Clear Cache/Incognito)
-- **Path**: `Splash` -> `Login` -> `OTP` -> `Daily Lock Check` -> **FORCED REDIRECT** -> `Result`
-- **Logic**: After OTP verification, the server returns the player's history. If a "completed" game is found for the current date in **IST (Asia/Kolkata)**, the app reconstructs the `scoreData` from the server and bypasses both Registration and Gameplay.
-
-### Scenario E: Unregistered Auth (Verified but no Name)
-- **Path**: `Splash` -> `Login` -> `OTP` -> `Register` -> `Game` -> `Result`
-- **Logic**: If `res.UserName` is null or "Test" after OTP, the user is forced into the `Register` screen before they can access the iframe.
-
-### Scenario F: Puzzle Expiry during Session
-- **Path**: `Game Screen` -> `Iframe Load` -> `Expired Message` -> `Expired Screen`
-- **Logic**: If the AmuseLabs iframe emits a `PUZZLE_EXPIRED` event or the timer hits a safety threshold, the user is moved to a dedicated "Expired" state to prevent scoring on stale data.
-
-### Scenario G: Incomplete Registration Flow
-- **Path**: `Register` -> `Refresh`
-- **Logic**: Since the session (ID/Token) is saved *before* the name, a refresh on the Registration screen will correctly keep the user on the Registration screen (instead of resetting to Login).
-
----
+*Documentation Version: 3.0 | Updated April 2026 based on Production codebase.*
