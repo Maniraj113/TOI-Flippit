@@ -16,21 +16,19 @@
   <!-- canvas-confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+  <!-- Google Font fallback for robust experience -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
     /* ═══════════════════════════════════════════════════════
        CSS: DESIGN TOKENS & BASE
        ═══════════════════════════════════════════════════════ */
     @font-face {
       font-family: 'Gotham';
+      /* Pointing to the file found in Archieve directory */
       src: url('./GothamBook_2.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-    }
-
-    @font-face {
-      font-family: 'TOIBold';
-      src: url('./POSDSB[94].otf') format('opentype');
-      font-weight: bold;
     }
 
     :root {
@@ -38,13 +36,17 @@
       --brand-brown: #540000;
       --brand-salmon: #F17660;
       --brand-dark-red: #990000;
-      /* ──── Gotham is the ONLY font (business-approved) ──── */
-      --font-main: 'Gotham', sans-serif;
-      --font-bold: 'TOIBold', 'Gotham', sans-serif;
-      /* Aliases so all var() references resolve to Gotham */
-      --font-gotham: 'Gotham', sans-serif;
-      --font-outfit: 'Gotham', sans-serif;
-      --font-playfair: 'Gotham', sans-serif;
+
+      /* ──── PROFESSIONALLY UNIFORM FONT SYSTEM ──── */
+      /* Gotham is primary, Inter is a high-fidelity fallback */
+      --font-heading: 'Gotham', 'Inter', sans-serif;
+      --font-body: 'Gotham', 'Inter', sans-serif;
+      --font-numbers: 'Gotham', 'Inter', sans-serif;
+
+      /* Standardized Line Heights */
+      --lh-heading: 1.2;
+      --lh-body: 1.5;
+      --lh-tight: 1.1;
     }
 
     *,
@@ -53,7 +55,8 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: var(--font-main);
+      font-family: var(--font-body);
+      line-height: var(--lh-body);
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -131,9 +134,10 @@
       color: white;
       padding: 12px 28px;
       border-radius: 4px;
-      font-family: var(--font-playfair);
+      font-family: var(--font-heading);
       font-weight: 700;
       font-size: 16px;
+      line-height: var(--lh-heading);
       border: 1px solid rgba(255, 255, 255, 0.1);
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
@@ -166,7 +170,7 @@
       font-size: 18px;
       text-align: center;
       color: black;
-      font-family: var(--font-main);
+      font-family: var(--font-body);
       outline: none;
       transition: box-shadow 0.2s;
     }
@@ -278,7 +282,8 @@
       font-weight: 900;
       line-height: 1;
       min-width: 44px;
-      font-family: var(--font-outfit);
+      font-family: var(--font-numbers);
+      line-height: var(--lh-tight);
       text-align: center;
     }
 
@@ -352,7 +357,8 @@
       font-weight: 900;
       margin-bottom: 10px;
       letter-spacing: 0.05em;
-      font-family: var(--font-outfit);
+      font-family: var(--font-heading);
+      line-height: var(--lh-heading);
     }
 
     .auth-heading .auth-sub {
@@ -497,9 +503,10 @@
       display: none;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       background: var(--brand-red);
       overflow-y: auto;
-      padding: 40px 0;
+      padding: 0;
     }
 
     #screen-result.active {
@@ -507,151 +514,157 @@
     }
 
     .result-inner {
-      padding: 0 20px;
+      padding: 40px 25px;
+      /* Explicit padding to force rectangle space */
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 400px;
+      max-width: 330px;
+      /* Narrower max-width for clear "rectangular" feel */
     }
 
     .result-logo {
-      width: 280px;
+      width: 160px;
       height: auto;
-      margin-bottom: 30px;
+      margin-bottom: 70px;
       filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
     }
 
     .result-card {
       width: 100%;
       background: var(--brand-salmon);
-      border-radius: 32px;
-      padding: 40px 24px 32px;
+      border-radius: 12px;
+      padding: 24px;
+      /* Default padding, but heading will push down */
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       position: relative;
     }
 
     .btn-close-result {
       position: absolute;
-      top: 20px;
-      right: 24px;
+      top: 15px;
+      right: 15px;
       background: none;
       border: none;
-      color: rgba(84, 0, 0, 0.4);
-      font-size: 26px;
+      color: rgba(84, 0, 0, 0.3);
+      font-size: 20px;
       cursor: pointer;
       line-height: 1;
-      padding: 4px;
-      z-index: 5;
     }
 
     .result-msg-top {
-      font-size: 26px;
+      font-size: 20px;
       font-weight: 800;
+      /* Extra bold as requested */
       color: var(--brand-brown);
-      margin-bottom: 24px;
-      font-family: var(--font-gotham);
-      text-transform: none;
-      letter-spacing: -0.01em;
+      margin: 40px 0 30px;
+      /* Added large top margin to create space from card edge */
+      font-family: var(--font-heading);
       text-align: center;
     }
 
     .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
       width: 100%;
-      margin-bottom: 24px;
+      max-width: 220px;
+      justify-content: center;
+      margin-bottom: 35px;
+    }
+
+    .stat-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      gap: 10px;
+    }
+
+    .stat-icon-up {
+      font-size: 26px;
+      line-height: 1;
+      height: 30px;
     }
 
     .stat-tile {
       background: var(--brand-brown);
-      border-radius: 12px;
-      padding: 20px 10px;
+      padding: 12px 5px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       color: white;
       text-align: center;
+      width: 100%;
     }
 
-    .stat-icon-up {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .stat-group:first-child .stat-tile {
+      border-radius: 6px 2px 2px 6px;
+    }
+
+    .stat-group:last-child .stat-tile {
+      border-radius: 2px 6px 6px 2px;
     }
 
     .stat-label-small {
-      font-size: 13px;
-      font-weight: 500;
-      opacity: 0.9;
-      margin-bottom: 4px;
+      font-size: 16px;
+      font-weight: 700;
+      /* Bolder labels */
+      opacity: 0.95;
+      margin-bottom: 2px;
     }
 
     .stat-value-large {
-      font-size: 22px;
+      font-size: 18px;
+      /* Slightly larger to feel bolder */
       font-weight: 900;
-      line-height: 1;
-      font-family: var(--font-outfit);
+      /* Maximum bold */
+      font-family: var(--font-heading);
     }
 
     .result-msg-bottom {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--brand-brown);
       font-weight: 600;
-      line-height: 1.5;
+      /* Slightly bolder for readability */
+      line-height: 1.6;
       text-align: center;
-      margin: 10px 0 24px;
-      max-width: 280px;
-      opacity: 0.9;
+      margin: 0 0 35px;
+      max-width: 220px;
     }
 
     .btn-share {
-      padding: 14px 28px;
-      font-size: 18px;
-      border-radius: 8px;
-      background: white;
-      color: var(--brand-brown);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      width: auto;
-      min-width: 160px;
+      gap: 6px;
+      padding: 8px 16px;
+      /* Tighter padding to fit exactly with the text */
+      font-size: 15px;
       font-weight: 900;
+      /* Boldest share button */
+      border-radius: 4px;
+      background: white;
+      color: var(--brand-brown);
       border: none;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
       cursor: pointer;
-      font-family: var(--font-gotham);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      transition: transform 0.2s, opacity 0.2s;
+      letter-spacing: 0.05em;
     }
 
     .btn-share:active {
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     .btn-share svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .btn-share:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-
-    .btn-share:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+      width: 16px;
+      height: 16px;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -662,9 +675,10 @@
       position: fixed;
       inset: 0;
       z-index: 1000;
-      background: rgba(0, 0, 0, 0.85);
-      align-items: flex-end;
+      background: rgba(0, 0, 0, 0.85); /* Dark backdrop for focus */
+      align-items: center; /* Centered popup */
       justify-content: center;
+      padding: 24px;
     }
 
     #how-overlay.open {
@@ -673,252 +687,239 @@
 
     .how-panel {
       width: 100%;
-      max-width: 430px;
-      border-radius: 40px 40px 0 0;
-      background: var(--brand-brown);
-      padding: 40px 24px 56px;
+      max-width: 340px; /* Aligned with result card width */
+      border-radius: 12px; /* Professional card rounding */
+      background: var(--brand-red); /* Red background as requested */
+      padding: 32px 24px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     }
 
     .how-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(241, 118, 96, 0.2); /* Subtle salmon divider */
+      padding-bottom: 12px;
     }
 
     .how-header h2 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
+      color: var(--brand-salmon); /* Information in salmon color */
       letter-spacing: 0.05em;
-      font-family: var(--font-outfit);
+      font-family: var(--font-heading);
+      line-height: var(--lh-heading);
+      text-transform: uppercase;
     }
 
     .btn-close-how {
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--brand-salmon);
       font-size: 24px;
       background: none;
       border: none;
       cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .btn-close-how:hover {
+      opacity: 1;
     }
 
     .how-steps {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 16px;
     }
 
     .how-step {
       display: flex;
-      align-items: flex-start;
-      gap: 20px;
-    }
-
-    .step-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: rgba(255, 215, 0, 0.08);
-      border: 1.5px solid rgba(255, 215, 0, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .step-icon svg {
-      width: 24px;
-      height: 24px;
-      stroke: #ffd700;
-      fill: none;
-      stroke-width: 2;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .step-title {
-      font-weight: 800;
-      font-size: 16px;
-      margin-bottom: 4px;
+      font-weight: 900;
+      font-size: 15px;
+      color: white; /* Title in white for contrast */
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .step-desc {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.5);
-      line-height: 1.5;
+      color: var(--brand-salmon); /* Information in salmon color */
+      line-height: 1.4;
       font-weight: 500;
+    }
+
+    .step-desc b, .step-desc i {
+      color: white; /* Important terms in white */
     }
 
     /* ═══════════════════════════════════════════════════════
        CSS: TROPHY CARD (Off-screen Generation)
        ═══════════════════════════════════════════════════════ */
+    /* ── The shareable 1080x1620 canvas ── */
     #capture-card {
       position: absolute;
       top: 0;
       left: -9999px;
       width: 1080px;
-      height: 1080px;
-      background: #8B0000;
-      /* Deep red */
+      height: 1620px;
+      background: var(--brand-red);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px;
+      justify-content: flex-start;
+      padding: 100px 40px;
       box-sizing: border-box;
-      font-family: var(--font-outfit);
+      font-family: var(--font-heading);
     }
 
     .cap-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 30px;
-      /* Reduced space */
+      gap: 30px;
+      margin-bottom: 180px; /* Maximum space from logo to card */
     }
 
     .cap-flippit-logo {
-      width: 400px;
-      /* Scaled down */
+      width: 480px;
       height: auto;
     }
 
-    .cap-by-line {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 24px;
-      font-weight: 500;
-      margin: 10px 0;
-    }
-
-    .cap-toi-logo {
-      width: 240px;
-      /* Scaled down */
-      filter: brightness(0) invert(1);
-    }
-
+    /* ── The Salmon Card ── */
     .cap-main-box {
-      width: 800px;
+      width: 780px; 
       background: var(--brand-salmon);
-      border-radius: 56px;
-      padding: 45px 50px;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 35px;
-    }
-
-    .cap-top-section {
+      border-radius: 40px;
+      padding: 160px 60px 150px; /* Ultimate top/bottom padding for "lengthy" feel */
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
       text-align: center;
-      margin-bottom: 30px;
     }
 
     .cap-user-row {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 15px;
+      gap: 40px;
+      margin-bottom: 120px; /* Maximum center space between date and score tiles */
     }
 
     .cap-username-badge {
-      font-size: 20px;
-      font-weight: 800;
-      color: #540000;
-      opacity: 0.6;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .cap-on-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: #540000;
-      opacity: 0.4;
-      text-transform: uppercase;
-    }
-
-    .cap-catchy-title {
-      font-size: 48px;
+      font-size: 38px;
       font-weight: 900;
-      color: #540000;
-      margin: 0;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-    }
-
-    .cap-cal-box {
-      width: 70px;
-      height: 75px;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .cap-cal-head {
-      background: #DE3E3E;
-      color: white;
-      font-size: 11px;
-      font-weight: 900;
-      text-align: center;
-      padding: 3px 0;
+      color: var(--brand-brown);
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: var(--font-heading); /* Gotham Bold */
     }
 
-    .cap-cal-body {
-      flex: 1;
+    .cap-flip-date {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      gap: 12px;
+    }
+
+    .cap-flip-box {
+      width: 48px;
+      height: 72px;
+      background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 48%, #e0e0e0 52%, #ffffff 100%);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
       font-weight: 900;
-      color: #333;
-      line-height: 1;
+      color: #2D0000;
+      position: relative;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Horizontal slit for flipped feel */
+    .cap-flip-box::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: rgba(0, 0, 0, 0.1);
+      transform: translateY(-50%);
+    }
+
+    .cap-flip-sep {
+      font-size: 40px;
+      font-weight: 900;
+      color: #2D0000;
+      opacity: 0.6;
     }
 
     .cap-tiles-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
+      display: flex;
+      flex-direction: row;
+      gap: 8px; 
+      justify-content: center;
+      width: 100%;
     }
 
-    .cap-result-tile {
-      background: #2D0000;
-      border-radius: 28px;
-      padding: 28px 25px;
+    .cap-stat-group {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      color: white;
-      position: relative;
+      align-items: center;
+      gap: 18px;
     }
 
-    .cap-tile-label {
-      font-size: 16px;
-      font-weight: 800;
-      opacity: 0.6;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .cap-tile-value {
-      font-size: 64px;
-      font-weight: 900;
+    .cap-tile-icon-up {
+      font-size: 70px; 
       line-height: 1;
     }
 
-    .cap-tile-suffix {
-      font-size: 20px;
-      opacity: 0.4;
-      margin-left: 4px;
+    .cap-result-tile {
+      width: 100%;
+      background: var(--brand-brown);
+      padding: 30px 15px; /* Tighter padding to match result page pattern */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      min-height: 160px; /* Reduced to avoid "too big" feel */
     }
 
-    .cap-tile-icon {
-      width: 32px;
-      height: 32px;
-      opacity: 0.9;
-      margin-bottom: 8px;
+    /* Exact same split-pill pattern from results page, scaled */
+    .cap-stat-group:first-child .cap-result-tile {
+      border-radius: 28px 6px 6px 28px;
+    }
+    .cap-stat-group:last-child .cap-result-tile {
+      border-radius: 6px 28px 28px 6px;
+    }
+
+    .cap-tile-label {
+      font-size: 28px;
+      font-weight: 700;
+      opacity: 0.8;
+      margin-bottom: 6px;
+      text-transform: none;
+    }
+
+    .cap-tile-value {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -1000,46 +1001,46 @@
     <!-- ═══════════════════════════════════════════════════════
          HTML: TROPHY CARD (Off-screen for Sharing)
          ═══════════════════════════════════════════════════════ -->
+    <!-- ═══════════════════════════════════════════════════════
+         HTML: TROPHY CARD (Off-screen for Sharing)
+         ═══════════════════════════════════════════════════════ -->
     <div id="capture-card">
       <div class="cap-header">
         <img src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="Flippit" class="cap-flippit-logo">
-        <div class="cap-by-line">by</div>
-        <img src="https://static.toiimg.com/photo/79638883.cms" alt="TOI" class="cap-toi-logo">
       </div>
 
       <div class="cap-main-box">
-        <div class="cap-top-section">
-          <div class="cap-user-row">
-            <div class="cap-username-badge"><span id="cc-name-node">PLAYER</span>'S FLIPPED IT CARD</div>
-            <div class="cap-on-text">ON</div>
-            <div class="cap-cal-box">
-              <div class="cap-cal-head" id="cc-cal-m">...</div>
-              <div class="cap-cal-body" id="cc-cal-d">..</div>
-            </div>
+        <div class="cap-user-row">
+          <div class="cap-username-badge"><span id="cc-name-node">PLAYER</span>'S Flipped it Card</div>
+
+          <!-- Premium Flip Date Display -->
+          <div class="cap-flip-date">
+            <div class="cap-flip-box" id="cc-date-d1">2</div>
+            <div class="cap-flip-box" id="cc-date-d2">0</div>
+            <div class="cap-flip-sep">-</div>
+            <div class="cap-flip-box" id="cc-date-m1">0</div>
+            <div class="cap-flip-box" id="cc-date-m2">4</div>
+            <div class="cap-flip-sep">-</div>
+            <div class="cap-flip-box" id="cc-date-y1">2</div>
+            <div class="cap-flip-box" id="cc-date-y2">6</div>
           </div>
-          <h2 class="cap-catchy-title">HOW ABOUT YOU?</h2>
         </div>
 
         <div class="cap-tiles-grid">
-          <div class="cap-result-tile">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-              <svg class="cap-tile-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <div class="cap-tile-label">SOLVED IN</div>
+          <div class="cap-stat-group">
+            <div class="cap-tile-icon-up">⏱️</div>
+            <div class="cap-result-tile">
+              <div class="cap-tile-label">Solved in</div>
+              <div class="cap-tile-value"><span id="cc-time">0</span> secs</div>
             </div>
-            <div class="cap-tile-value"><span id="cc-time">0</span><span class="cap-tile-suffix">sec</span></div>
           </div>
-          <div class="cap-result-tile">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-              <svg class="cap-tile-icon" viewBox="0 0 24 24" fill="#FACC15">
-                <path
-                  d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <div class="cap-tile-label">SCORE</div>
+
+          <div class="cap-stat-group">
+            <div class="cap-tile-icon-up">⭐</div>
+            <div class="cap-result-tile">
+              <div class="cap-tile-label">Your Score</div>
+              <div class="cap-tile-value"><span id="cc-score">0</span>/100</div>
             </div>
-            <div class="cap-tile-value"><span id="cc-score">0</span><span class="cap-tile-suffix">/100</span></div>
           </div>
         </div>
       </div>
@@ -1186,48 +1187,51 @@
     <!-- ═════════════════════ SCREEN - RESULTS ═════════════════════ -->
     <div id="screen-result" class="screen">
       <div class="result-inner fade-in">
+
+        <!-- Logo sits above the card (outside it) -->
         <img class="result-logo" src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Logo">
 
         <div class="result-card">
+          <button class="btn-close-result" id="result-close-btn">&times;</button>
 
-          <div class="result-msg-top" id="result-msg-top">You nailed it!</div>
+          <!-- e.g. "You nailed it!" -->
+          <div class="result-msg-top" id="result-msg-top">Mission Accomplished!</div>
 
+          <!-- Stats: icon above each dark tile -->
           <div class="stats-grid">
-            <div class="stat-tile">
-              <div class="stat-icon-up">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
+            <div class="stat-group">
+              <!-- Stopwatch emoji icon above tile -->
+              <div class="stat-icon-up">⏱️</div>
+              <div class="stat-tile">
+                <div class="stat-label-small">Solved in</div>
+                <div class="stat-value-large"><span id="r-time">0</span> secs</div>
               </div>
-              <div class="stat-label-small">Solved in</div>
-              <div class="stat-value-large"><span id="r-time">0</span> secs</div>
             </div>
 
-            <div class="stat-tile">
-              <div class="stat-icon-up">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="#FACC15">
-                  <path
-                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
+            <div class="stat-group">
+              <!-- Star emoji icon above tile -->
+              <div class="stat-icon-up">⭐</div>
+              <div class="stat-tile">
+                <div class="stat-label-small">Your Score</div>
+                <div class="stat-value-large"><span id="r-score">0</span>/100</div>
               </div>
-              <div class="stat-label-small">Your Score</div>
-              <div class="stat-value-large"><span id="r-score">0</span>/100</div>
             </div>
           </div>
 
+          <!-- Bottom message e.g. "Well, played! A fresh flip awaits..." -->
           <div class="result-msg-bottom" id="result-msg-bottom"></div>
 
+          <!-- Share button: white pill with arrow icon -->
           <button class="btn-share" id="share-btn">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 5L20 12L13 19V15C8 15 4.5 16.5 2 20C3 15 6 10 13 9V5Z" />
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M14 9V5L21 12L14 19V14.9C9 14.9 5.5 16.5 3 20C4 15 7 10 14 9Z" />
             </svg>
             SHARE
           </button>
         </div>
 
-        <!-- Testing Mode Buttons -->
-        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
+        <!-- Testing Mode Buttons (hidden unless test mode active) -->
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
           <button id="replay-btn"
             style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
             RE-PLAY (TEST MODE)
@@ -1270,57 +1274,62 @@
         </div>
         <div class="how-steps">
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
+
             <div>
-              <div class="step-title">Read the board</div>
-              <div class="step-desc">Look at the scrambled flip-board letter tiles.</div>
+              <div class="step-title">Start Playing</div>
+              <div class="step-desc">After a one-time login, tap Start Playing. The 60-second timer begins immediately.
+              </div>
             </div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-            </div>
+
             <div>
-              <div class="step-title">Guess the word</div>
-              <div class="step-desc">Figure out the hidden word or phrase.</div>
+              <div class="step-title">Clue Words</div>
+              <div class="step-desc">You’ll see two clue words (e.g. <b>Slow</b> + <b>Meal</b>).</div>
             </div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
+
             <div>
-              <div class="step-title">Beat the clock</div>
-              <div class="step-desc">You have 60 seconds — every second counts!</div>
+              <div class="step-title">Solve the Phrase</div>
+              <div class="step-desc">Find the correct two-word phrase within 60 seconds (e.g. <i>Slow Meal</i> = <b>Fast
+                  Food</b>).</div>
             </div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            </div>
+
             <div>
-              <div class="step-title">Flip it!</div>
-              <div class="step-desc">Select the correct letters in order to score.</div>
+              <div class="step-title">Flip the Logic</div>
+              <div class="step-desc">The answer is based on synonyms or antonyms for one or both clues (Slow →
+                <b>Fast</b> | Meal → <b>Food</b>).
+              </div>
             </div>
           </div>
+          <div class="how-step">
+
+            <div>
+              <div class="step-title">Daily Attempt</div>
+              <div class="step-desc">You get one attempt per day. Scan the fresh QR code in the day’s TOI to play.</div>
+            </div>
+          </div>
+          <div class="how-step">
+
+            <div>
+              <div class="step-title">Reveal Letter</div>
+              <div class="step-desc">Need help? Use the Reveal Letter option — but this will reduce your points.</div>
+            </div>
+          </div>
+          <div class="how-step">
+
+            <div>
+              <div class="step-title">Get Featured</div>
+              <div class="step-desc">Fastest players with high scores stand a chance to be featured in The Times of
+                India.</div>
+            </div>
+          </div>
+          <div style="text-align:center; color:var(--brand-salmon); font-weight:900; margin-top:20px; font-size:16px; text-transform:uppercase; letter-spacing:0.1em;">Happy playing!</div>
         </div>
-        <button class="btn-primary" id="how-start-btn"
-          style="margin-top:48px;width:100%;padding:16px;font-size:18px;">LET'S START</button>
+
       </div>
     </div>
 
@@ -1698,10 +1707,10 @@
         const totalFlips = Math.max(1, (apiLogs || []).length);
 
         // ── Business-approved top messages (by time taken) ──
-        let msgTop = 'MISSION ACCOMPLISHED!';
-        if (timeSpent <= 20) msgTop = 'FASTEST FINGERS IN TOWN!';
-        else if (timeSpent <= 35) msgTop = "YOU'RE ON FIRE!";
-        else if (timeSpent <= 50) msgTop = 'YOU CRUSHED IT!';
+        let msgTop = 'Mission Accomplished!';
+        if (timeSpent <= 20) msgTop = 'Fastest Finger in Town!';
+        else if (timeSpent <= 35) msgTop = "You're On Fire!";
+        else if (timeSpent <= 50) msgTop = 'You Crushed It!';
 
         // ── Business-approved bottom messages (random pick) ──
         const msgArray = [
@@ -1856,11 +1865,14 @@
         const ccName = document.getElementById('cc-name-node');
         if (ccName) ccName.textContent = name.toUpperCase();
 
-        const ccMonth = document.getElementById('cc-cal-m');
-        if (ccMonth) ccMonth.textContent = monthsS[now.getMonth()];
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yy = String(now.getFullYear()).slice(-2);
 
-        const ccDay = document.getElementById('cc-cal-d');
-        if (ccDay) ccDay.textContent = day;
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setVal('cc-date-d1', dd[0]); setVal('cc-date-d2', dd[1]);
+        setVal('cc-date-m1', mm[0]); setVal('cc-date-m2', mm[1]);
+        setVal('cc-date-y1', yy[0]); setVal('cc-date-y2', yy[1]);
 
         document.getElementById('result-msg-top').textContent = data.msgTop;
         document.getElementById('result-msg-bottom').textContent = data.msgBottom;
@@ -1997,15 +2009,10 @@ If you think you can even come close to my scorecard, pick up the Times of India
           }
 
           if (type.includes('EXPIRE') && !State.isComplete) {
-            // In Test Mode, we ignore iframe-driven expiration to allow re-testing
-            if (!State.isTestMode) {
-              State.isComplete = true;
-              GameEngine.stopTimer();
-              document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-              UI.showScreen('expired');
-            } else {
-              console.log('[TestMode] Iframe sent EXPIRE — ignoring redirect.');
-            }
+            // Even if timer expires, show the result scorecard as requested
+            GameEngine.onComplete({
+              timeTaken: CONFIG.MAX_TIME
+            });
           }
         });
       },
@@ -2040,17 +2047,13 @@ If you think you can even come close to my scorecard, pick up the Times of India
             const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
 
             if (isFinal && !State.isTestMode) {
-              if (status === 'expired' || status === 'failure') {
-                document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-                UI.showScreen('expired');
-              } else {
-                const rawTime = Number(log.time_taken) || 60;
-                UI.showResults({
-                  ...GameEngine.calculateResults(rawTime, allLogs),
-                  streak: Number(stats.streak) || 1,
-                  bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
-                });
-              }
+              // Show results even for expired/failure status as long as it's from today
+              const rawTime = Number(log.time_taken) || 60;
+              UI.showResults({
+                ...GameEngine.calculateResults(rawTime, allLogs),
+                streak: Number(stats.streak) || 1,
+                bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
+              });
             } else if (isFinal && State.isTestMode) {
               const rawTime = Number(log.time_taken) || 60;
               UI.showResults({
@@ -2075,12 +2078,11 @@ If you think you can even come close to my scorecard, pick up the Times of India
     });
 
     // --- How to Play ---
-    document.getElementById('how-btn').onclick = () => document.getElementById('how-overlay').classList.add('open');
-    document.getElementById('close-how-btn').onclick = () => document.getElementById('how-overlay').classList.remove('open');
-    document.getElementById('how-start-btn').onclick = () => {
-      document.getElementById('how-overlay').classList.remove('open');
-      document.getElementById('start-btn').click();
-    };
+    const howBtn = document.getElementById('how-btn');
+    if (howBtn) howBtn.onclick = () => document.getElementById('how-overlay').classList.add('open');
+
+    const closeHowBtn = document.getElementById('close-how-btn');
+    if (closeHowBtn) closeHowBtn.onclick = () => document.getElementById('how-overlay').classList.remove('open');
 
     // --- Auth Flow ---
     document.getElementById('send-otp-btn').onclick = async () => {
@@ -2119,16 +2121,12 @@ If you think you can even come close to my scorecard, pick up the Times of India
             const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
 
             if (isFinal && !State.isTestMode) {
-              // Forced lock-out in production
-              if (status === 'expired' || status === 'failure') {
-                document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-                UI.showScreen('expired');
-              } else {
-                UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60) });
-              }
+              // Show results even for expired/failure status as long as it's from today
+              const rawTime = Number(log.time_taken) || 60;
+              UI.showResults({ ...GameEngine.calculateResults(rawTime, stats.gameLogs || stats.logs || []) });
             } else if (isFinal && State.isTestMode) {
               // In Test Mode, show results but allow re-play via the new button
-              UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60) });
+              UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60, stats.gameLogs || stats.logs || []) });
             } else {
               // No previous game today or explicitly allowed to play
               GameBridge.launch();
