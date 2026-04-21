@@ -675,10 +675,11 @@
       position: fixed;
       inset: 0;
       z-index: 1000;
-      background: rgba(0, 0, 0, 0.85); /* Dark backdrop for focus */
-      align-items: center; /* Centered popup */
+      background: rgba(84, 0, 0, 0.85); /* Branded deep brown-red backdrop */
+      align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 20px;
+      backdrop-filter: blur(8px);
     }
 
     #how-overlay.open {
@@ -687,79 +688,77 @@
 
     .how-panel {
       width: 100%;
-      max-width: 340px; /* Aligned with result card width */
-      border-radius: 12px; /* Professional card rounding */
-      background: var(--brand-red); /* Red background as requested */
-      padding: 32px 24px;
+      max-width: 320px;
+      border-radius: 20px;
+      background: var(--brand-salmon); /* Branded card color */
+      padding: 36px 24px 28px;
       max-height: 85vh;
       overflow-y: auto;
       position: relative;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .how-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       margin-bottom: 24px;
-      border-bottom: 1px solid rgba(241, 118, 96, 0.2); /* Subtle salmon divider */
-      padding-bottom: 12px;
+      text-align: center;
     }
 
     .how-header h2 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
-      color: var(--brand-salmon); /* Information in salmon color */
-      letter-spacing: 0.05em;
+      color: var(--brand-brown);
+      letter-spacing: 0.1em;
       font-family: var(--font-heading);
-      line-height: var(--lh-heading);
       text-transform: uppercase;
     }
 
     .btn-close-how {
-      color: var(--brand-salmon);
-      font-size: 24px;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: var(--brand-brown);
+      font-size: 20px;
       background: none;
       border: none;
       cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-
-    .btn-close-how:hover {
-      opacity: 1;
+      opacity: 0.5;
     }
 
     .how-steps {
       display: flex;
       flex-direction: column;
-      gap: 16px;
     }
 
     .how-step {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(84, 0, 0, 0.08); /* Subtle divider */
+    }
+
+    .how-step:last-child {
+      border-bottom: none;
     }
 
     .step-title {
       font-weight: 900;
-      font-size: 15px;
-      color: white; /* Title in white for contrast */
+      font-size: 13px;
+      color: var(--brand-brown);
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
     }
 
     .step-desc {
       font-size: 14px;
-      color: var(--brand-salmon); /* Information in salmon color */
-      line-height: 1.4;
+      color: var(--brand-brown);
+      line-height: 1.5;
       font-weight: 500;
+      opacity: 0.85;
     }
 
-    .step-desc b, .step-desc i {
-      color: white; /* Important terms in white */
+    .step-desc b {
+      color: var(--brand-red);
+      font-weight: 900;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -770,109 +769,69 @@
       position: absolute;
       top: 0;
       left: -9999px;
-      width: 1080px;
-      height: 1620px;
+      width: 600px;
+      /* Reduced further for tighter focus */
+      height: 700px;
+      /* Slimmer vertical height */
       background: var(--brand-red);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 100px 40px;
+      justify-content: center;
+      padding: 0;
       box-sizing: border-box;
       font-family: var(--font-heading);
     }
 
     .cap-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 30px;
-      margin-bottom: 180px; /* Maximum space from logo to card */
+      margin-bottom: 80px;
     }
 
     .cap-flippit-logo {
-      width: 480px;
+      width: 280px;
+      /* More elegant size */
       height: auto;
     }
 
-    /* ── The Salmon Card ── */
+    /* ── The Salmon Card: Tall, Slim & Premium ── */
     .cap-main-box {
-      width: 780px; 
+      width: 400px;
+      /* Narrower to create larger red side-margins */
       background: var(--brand-salmon);
-      border-radius: 40px;
-      padding: 160px 60px 150px; /* Ultimate top/bottom padding for "lengthy" feel */
-      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
+      border-radius: 28px;
+      padding: 70px 50px 90px;
+      /* Increased padding to push tiles in and box down */
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
+      position: relative;
     }
 
-    .cap-user-row {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 40px;
-      margin-bottom: 120px; /* Maximum center space between date and score tiles */
-    }
-
-    .cap-username-badge {
-      font-size: 38px;
+    .cap-user-heading {
+      font-size: 20px;
+      /* Matching Mission Accomplished exactly */
       font-weight: 900;
+      /* Extra bold */
       color: var(--brand-brown);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-family: var(--font-heading); /* Gotham Bold */
-    }
-
-    .cap-flip-date {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .cap-flip-box {
-      width: 48px;
-      height: 72px;
-      background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 48%, #e0e0e0 52%, #ffffff 100%);
-      border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 42px;
-      font-weight: 900;
-      color: #2D0000;
-      position: relative;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Horizontal slit for flipped feel */
-    .cap-flip-box::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+      text-align: center;
+      line-height: 1.2;
       width: 100%;
-      height: 1.5px;
-      background: rgba(0, 0, 0, 0.1);
-      transform: translateY(-50%);
-    }
-
-    .cap-flip-sep {
-      font-size: 40px;
-      font-weight: 900;
-      color: #2D0000;
-      opacity: 0.6;
+      white-space: nowrap;
+      /* Force one line */
     }
 
     .cap-tiles-grid {
       display: flex;
       flex-direction: row;
-      gap: 8px; 
+      gap: 4px;
       justify-content: center;
-      width: 100%;
+      width: 300px;
+      /* Narrower grid to create side space from card edge */
+      margin-bottom: 20px;
     }
 
     .cap-stat-group {
@@ -880,46 +839,59 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
+      gap: 12px;
     }
 
-    .cap-tile-icon-up {
-      font-size: 70px; 
-      line-height: 1;
+    .cap-tile-icon {
+      font-size: 32px;
+      /* Small, neat icons */
     }
 
     .cap-result-tile {
       width: 100%;
       background: var(--brand-brown);
-      padding: 30px 15px; /* Tighter padding to match result page pattern */
+      padding: 10px 5px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       color: white;
-      min-height: 160px; /* Reduced to avoid "too big" feel */
+      min-height: 70px;
+      /* Matching the result screen's rectangular shape */
     }
 
-    /* Exact same split-pill pattern from results page, scaled */
     .cap-stat-group:first-child .cap-result-tile {
-      border-radius: 28px 6px 6px 28px;
+      border-radius: 16px 2px 2px 16px;
     }
+
     .cap-stat-group:last-child .cap-result-tile {
-      border-radius: 6px 28px 28px 6px;
+      border-radius: 2px 16px 16px 2px;
     }
 
     .cap-tile-label {
-      font-size: 28px;
+      font-size: 12px;
       font-weight: 700;
-      opacity: 0.8;
-      margin-bottom: 6px;
-      text-transform: none;
+      opacity: 0.9;
+      margin-bottom: 2px;
+      letter-spacing: 0.05em;
     }
 
     .cap-tile-value {
-      font-size: 52px;
+      font-size: 22px;
       font-weight: 900;
       line-height: 1;
+    }
+
+    /* Subtle date in corner */
+    .cap-footer-date {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--brand-brown);
+      letter-spacing: 0.05em;
+      opacity: 0.6;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -1010,25 +982,13 @@
       </div>
 
       <div class="cap-main-box">
-        <div class="cap-user-row">
-          <div class="cap-username-badge"><span id="cc-name-node">PLAYER</span>'S Flipped it Card</div>
-
-          <!-- Premium Flip Date Display -->
-          <div class="cap-flip-date">
-            <div class="cap-flip-box" id="cc-date-d1">2</div>
-            <div class="cap-flip-box" id="cc-date-d2">0</div>
-            <div class="cap-flip-sep">-</div>
-            <div class="cap-flip-box" id="cc-date-m1">0</div>
-            <div class="cap-flip-box" id="cc-date-m2">4</div>
-            <div class="cap-flip-sep">-</div>
-            <div class="cap-flip-box" id="cc-date-y1">2</div>
-            <div class="cap-flip-box" id="cc-date-y2">6</div>
-          </div>
+        <div class="cap-user-heading">
+          <span id="cc-name-node">PLAYER</span> FLIPPEDIT TODAY
         </div>
 
         <div class="cap-tiles-grid">
           <div class="cap-stat-group">
-            <div class="cap-tile-icon-up">⏱️</div>
+            <div class="cap-tile-icon">⏱️</div>
             <div class="cap-result-tile">
               <div class="cap-tile-label">Solved in</div>
               <div class="cap-tile-value"><span id="cc-time">0</span> secs</div>
@@ -1036,13 +996,15 @@
           </div>
 
           <div class="cap-stat-group">
-            <div class="cap-tile-icon-up">⭐</div>
+            <div class="cap-tile-icon">⭐</div>
             <div class="cap-result-tile">
-              <div class="cap-tile-label">Your Score</div>
+              <div class="cap-tile-label">Score</div>
               <div class="cap-tile-value"><span id="cc-score">0</span>/100</div>
             </div>
           </div>
         </div>
+
+        <div class="cap-footer-date" id="cc-date-full">DATE</div>
       </div>
     </div>
 
@@ -1327,7 +1289,7 @@
                 India.</div>
             </div>
           </div>
-          <div style="text-align:center; color:var(--brand-salmon); font-weight:900; margin-top:20px; font-size:16px; text-transform:uppercase; letter-spacing:0.1em;">Happy playing!</div>
+          <div style="text-align:center; color:var(--brand-brown); font-weight:900; margin-top:30px; font-size:14px; text-transform:uppercase; letter-spacing:0.15em; opacity:0.7;">Happy playing!</div>
         </div>
 
       </div>
@@ -1863,16 +1825,25 @@
 
         // Update Share Card
         const ccName = document.getElementById('cc-name-node');
-        if (ccName) ccName.textContent = name.toUpperCase();
+        const ccHeading = document.querySelector('.cap-user-heading');
+        if (ccName) {
+          ccName.textContent = name.toUpperCase();
+          // Auto-shrink font if name is long to keep it on one line
+          if (name.length > 18) {
+            ccHeading.style.fontSize = '13px';
+          } else if (name.length > 12) {
+            ccHeading.style.fontSize = '16px';
+          } else {
+            ccHeading.style.fontSize = '20px'; // Default: matches Mission Accomplished
+          }
+        }
 
         const dd = String(now.getDate()).padStart(2, '0');
         const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const yy = String(now.getFullYear()).slice(-2);
-
-        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-        setVal('cc-date-d1', dd[0]); setVal('cc-date-d2', dd[1]);
-        setVal('cc-date-m1', mm[0]); setVal('cc-date-m2', mm[1]);
-        setVal('cc-date-y1', yy[0]); setVal('cc-date-y2', yy[1]);
+        const yyyy = now.getFullYear();
+        const dateFull = `${dd}/${mm}/${yyyy}`;
+        const ccDate = document.getElementById('cc-date-full');
+        if (ccDate) ccDate.textContent = dateFull;
 
         document.getElementById('result-msg-top').textContent = data.msgTop;
         document.getElementById('result-msg-bottom').textContent = data.msgBottom;
