@@ -855,18 +855,17 @@
 
     .cap-user-heading {
       font-size: 20px;
-      /* Matching Mission Accomplished exactly */
       font-weight: 900;
-      /* Extra bold */
       color: var(--brand-brown);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
       margin-bottom: 40px;
       text-align: center;
-      line-height: 1.2;
+      line-height: 1.3;
       width: 100%;
-      white-space: nowrap;
-      /* Force one line */
+      white-space: normal;         /* Allow wrapping */
+      word-break: break-word;      /* Break very long words */
+      overflow-wrap: break-word;
     }
 
     .cap-tiles-grid {
@@ -1330,49 +1329,320 @@
       </div>
     </div>
 
-    <!-- ═══════════ TEST NAVIGATION (Dev Only) ═══════════ -->
+    <!-- ═══════════ QA CONTROL PANEL (Test Mode Only) ═══════════ -->
+    <!-- Toggle tab always visible -->
+    <button id="test-toggle-tab" onclick="DevTools.togglePanel()" style="display:none;">QA ▲</button>
+
     <div id="test-nav-bar" style="display:none;">
-      <button onclick="DevTools.jumpTo('splash')">SPLASH</button>
-      <button onclick="DevTools.jumpTo('login')">LOGIN</button>
-      <button onclick="DevTools.jumpTo('otp')">OTP</button>
-      <button onclick="DevTools.jumpTo('register')">REGISTER</button>
-      <button onclick="DevTools.jumpTo('game')">GAME</button>
-      <button onclick="DevTools.jumpTo('result')">RESULT</button>
-      <button onclick="DevTools.jumpTo('expired')">EXPIRED</button>
-      <button onclick="DevTools.jumpTo('how')">HOW</button>
-      <button onclick="DevTools.reset()" style="background:#555">RESET</button>
+
+      <!-- Row 1: Screen Navigation -->
+      <div class="tbar-row">
+        <span class="tbar-label">SCREENS</span>
+        <button onclick="DevTools.jumpTo('splash')">SPLASH</button>
+        <button onclick="DevTools.jumpTo('login')">LOGIN</button>
+        <button onclick="DevTools.jumpTo('otp')">OTP</button>
+        <button onclick="DevTools.jumpTo('register')">REGISTER</button>
+        <button onclick="DevTools.jumpTo('game')">GAME</button>
+        <button onclick="DevTools.jumpTo('how')">HOW TO PLAY</button>
+        <button onclick="DevTools.togglePanel()" style="margin-left:auto;" class="tbar-btn-reset">▼ HIDE</button>
+      </div>
+
+      <!-- Row 2: Result Scenarios -->
+      <div class="tbar-row">
+        <span class="tbar-label">RESULT</span>
+        <button onclick="DevTools.jumpTo('result','fast')" class="tbar-btn-green">⚡ FAST (1-20s)</button>
+        <button onclick="DevTools.jumpTo('result','fire')" class="tbar-btn-green">🔥 FIRE (21-35s)</button>
+        <button onclick="DevTools.jumpTo('result','crush')" class="tbar-btn-amber">💪 CRUSH (36-50s)</button>
+        <button onclick="DevTools.jumpTo('result','mission')" class="tbar-btn-amber">✅ MISSION (51-60s)</button>
+        <button onclick="DevTools.nextBottomMsg()" class="tbar-btn-info">💬 NEXT MSG</button>
+      </div>
+
+      <!-- Row 3: Expired + Name Testing -->
+      <div class="tbar-row">
+        <span class="tbar-label">EXPIRED</span>
+        <button onclick="DevTools.jumpTo('expired')" class="tbar-btn-red">⏰ EXPIRED</button>
+        <button onclick="DevTools.nextExpireMsg()" class="tbar-btn-red">💬 NEXT MSG</button>
+        <span class="tbar-sep"></span>
+        <span class="tbar-label">NAME</span>
+        <button onclick="DevTools.setName('Raj')" class="tbar-btn-blue">SHORT</button>
+        <button onclick="DevTools.setName('Priya Sharma')" class="tbar-btn-blue">MEDIUM</button>
+        <button onclick="DevTools.setName('Venkataraman Krishnamurthy')" class="tbar-btn-blue">LONG</button>
+        <button onclick="DevTools.setName('Subrahmanyeswara Rao Venigalla')" class="tbar-btn-blue">V.LONG</button>
+        <button onclick="DevTools.promptName()" class="tbar-btn-blue">✏️ CUSTOM</button>
+      </div>
+
+      <!-- Row 4: Custom Score/Time -->
+      <div class="tbar-row">
+        <span class="tbar-label">CUSTOM</span>
+        <span class="tbar-hint">Score:</span>
+        <input id="tbar-score" type="number" min="0" max="97" value="85" class="tbar-input">
+        <span class="tbar-hint">Secs:</span>
+        <input id="tbar-time" type="number" min="1" max="60" value="12" class="tbar-input">
+        <button onclick="DevTools.jumpTo('result','custom')" class="tbar-btn-green">▶ RUN</button>
+        <span class="tbar-sep"></span>
+        <button onclick="DevTools.showDataFlow()" class="tbar-btn-info">📋 DATA FLOW</button>
+        <button onclick="DevTools.reset()" class="tbar-btn-reset">🔄 RESET APP</button>
+      </div>
+    </div>
+
+    <!-- Data Flow Inspector Modal -->
+    <div id="data-flow-modal" style="display:none;">
+      <div id="data-flow-panel">
+        <div id="dfp-header">
+          <span>📋 DATA FLOW INSPECTOR</span>
+          <button onclick="document.getElementById('data-flow-modal').style.display='none'">✕</button>
+        </div>
+        <div id="dfp-body">
+
+          <div class="dfp-section">
+            <div class="dfp-title">🔐 1. WHAT WE SAVE TO OUR DB (save-game API)</div>
+            <table class="dfp-table">
+              <tr><th>Field</th><th>Value Source</th><th>Example</th></tr>
+              <tr><td>user_id</td><td>verify-otp response → UserId (links user to game)</td><td>1042</td></tr>
+              <tr><td>g_id</td><td>AmuseLabs PUZZLE_LOAD msg → id/puzzleId. ⚠️ If missing: fallback=30 (test/error)</td><td>30</td></tr>
+              <tr><td>time_taken</td><td>See ➡ Timer section below</td><td>12</td></tr>
+              <tr><td>score</td><td>See ➡ Score Formula section below</td><td>85</td></tr>
+              <tr><td>status</td><td>'completed' on solve, 'expired' on timeout</td><td>completed</td></tr>
+              <tr><td>city</td><td>URL param ?city= or ?c=, default: TOIIN</td><td>TOIIN</td></tr>
+            </table>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">🔢 2. SCORE FORMULA (how we calculate)</div>
+            <table class="dfp-table">
+              <tr><th>Component</th><th>Formula</th><th>Range</th></tr>
+              <tr><td>Time Points</td><td>59 − time_taken (faster = more points)</td><td>0–58</td></tr>
+              <tr><td>Amuse Score</td><td>min(40, raw score from AmuseLabs)</td><td>0–40</td></tr>
+              <tr><td>TOTAL SCORE</td><td>Time Points + Amuse Score</td><td>0–98</td></tr>
+            </table>
+            <div class="dfp-note">EXAMPLE: 10s solve, AmuseLabs sends score=40 → (59-10)+min(40,40) = 49+40 = 89<br>AmuseLabs score = number of letters revealed (max ~40 points)<br>If timed out: score forced to 0, status=expired</div>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">⏱️ 3. TIMER: OUR TIMER vs AMUSELABS TIMER</div>
+            <table class="dfp-table">
+              <tr><th>Timer</th><th>How it works</th></tr>
+              <tr><td>OUR TIMER</td><td>Counts DOWN from 60s. Starts when PUZZLE_LOAD fires. time_taken = 60 − timeLeft at solve</td></tr>
+              <tr><td>AMUSE TIMER</td><td>AmuseLabs sends timeTaken in its COMPLETE event. We PREFER this value if present</td></tr>
+              <tr><td>Priority</td><td>if (data.timeTaken &gt; 0) use AmuseLabs; else use our 60-timeLeft</td></tr>
+            </table>
+            <div class="dfp-note">Both timers start at the same moment (PUZZLE_LOAD). In practice they are the same, but AmuseLabs value is more precise.</div>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">🔗 4. HOW USER &amp; GAME ARE LINKED</div>
+            <table class="dfp-table">
+              <tr><th>Table / API</th><th>Field</th><th>Note</th></tr>
+              <tr><td>save-user</td><td>user_name, Bearer token (header)</td><td>Token proves identity</td></tr>
+              <tr><td>save-game</td><td>user_id + Bearer token (header)</td><td>user_id IS the link between user &amp; game</td></tr>
+            </table>
+            <div class="dfp-note">Token is NOT stored in the game record. It is ONLY in the Authorization header so the backend can verify the caller. The user_id field inside save-game is what joins the two tables in the DB.</div>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">🎮 5. AMUSELABS POSTMESSAGE EVENTS</div>
+            <table class="dfp-table">
+              <tr><th>Event</th><th>When</th><th>Data We Read</th></tr>
+              <tr><td>PUZZLE_LOAD (or type includes LOAD)</td><td>Iframe ready</td><td>id/puzzleId → State.gameId; starts our 60s timer</td></tr>
+              <tr><td>COMPLETE / progress=SOLVE etc.</td><td>User solves</td><td>timeTaken/duration used in score; triggers onComplete()</td></tr>
+              <tr><td>EXPIRE</td><td>Puzzle time out</td><td>Triggers onExpire()</td></tr>
+            </table>
+            <div class="dfp-note">⚠️ g_id FALLBACK RISK: If AmuseLabs does not send id in PUZZLE_LOAD, g_id defaults to 30. In production, monitor the console for "[GameBridge] g_id not received" and alert the AmuseLabs team immediately.</div>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">📎 6. DATE URL — HOW IT WORKS</div>
+            <table class="dfp-table">
+              <tr><th>Param</th><th>Format</th><th>Example</th></tr>
+              <tr><td>?date=</td><td>YYYYMMDD or YYYY-MM-DD</td><td>?date=20260421</td></tr>
+            </table>
+            <div class="dfp-note">On load, we extract ?date= and compare it to today's IST date. If they match, the puzzle loads. If the QR code has an old date, the user sees the expired screen. This prevents old QR codes from being replayed. The QR code printed on the paper MUST contain today's date in the URL.</div>
+          </div>
+
+          <div class="dfp-section">
+            <div class="dfp-title">💾 7. LOCALSTORAGE KEYS</div>
+            <table class="dfp-table">
+              <tr><th>Key</th><th>Contents (JSON)</th><th>Cleared When</th></tr>
+              <tr><td>flippit_v2_session</td><td>{id, token, name}</td><td>RESET button or device clear</td></tr>
+              <tr><td>flippit_offline_queue</td><td>[{save-game payloads failed on bad network}]</td><td>On next successful API flush</td></tr>
+            </table>
+            <div class="dfp-note">LIVE SAMPLE of flippit_v2_session:<br>{"id": 1042, "token": "eyJhbGciOiJIUzI1NiJ9...", "name": "Priya Sharma"}</div>
+          </div>
+
+          <div class="dfp-section" id="dfp-live-section">
+            <div class="dfp-title">🟢 8. LIVE STATE (current browser session)</div>
+            <pre id="dfp-live-state">Click DATA FLOW to populate...</pre>
+          </div>
+
+        </div>
+      </div>
     </div>
 
     <style>
+      /* ── Toggle Tab ── */
+      #test-toggle-tab {
+        position: fixed;
+        bottom: 0;
+        right: 10px;
+        background: #1a1a1a;
+        color: #ffd54f;
+        border: 1px solid #555;
+        border-bottom: none;
+        border-radius: 4px 4px 0 0;
+        padding: 4px 10px;
+        font-size: 10px;
+        font-weight: 700;
+        font-family: monospace;
+        cursor: pointer;
+        z-index: 999999;
+      }
+      /* ── QA Control Panel ── */
       #test-nav-bar {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(10, 10, 10, 0.97);
+        border-top: 2px solid #ffd54f;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 5px 6px;
+        z-index: 999998;
+        font-family: monospace;
+      }
+      .tbar-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
-        padding: 5px;
-        z-index: 999999;
-        justify-content: center;
+        align-items: center;
+        gap: 3px;
       }
-
-      #test-nav-bar button {
-        background: #333;
-        color: white;
-        border: 1px solid #555;
-        padding: 6px 8px;
-        font-size: 10px;
+      .tbar-label {
+        color: #888;
+        font-size: 9px;
         font-weight: 700;
-        border-radius: 4px;
+        min-width: 44px;
+        text-align: right;
+        padding-right: 4px;
+        border-right: 1px solid #333;
+        margin-right: 2px;
+        flex-shrink: 0;
+      }
+      .tbar-hint {
+        color: #666;
+        font-size: 9px;
+        font-family: monospace;
+      }
+      #test-nav-bar button {
+        background: #2a2a2a;
+        color: #ddd;
+        border: 1px solid #444;
+        padding: 3px 6px;
+        font-size: 9px;
+        font-weight: 700;
+        border-radius: 3px;
+        cursor: pointer;
+        font-family: monospace;
+      }
+      #test-nav-bar button:hover { background: #444; }
+      .tbar-btn-green { background: #1a3a1a !important; border-color: #2e7d32 !important; color: #81c784 !important; }
+      .tbar-btn-amber { background: #3a2a00 !important; border-color: #f9a825 !important; color: #ffd54f !important; }
+      .tbar-btn-red   { background: #3a0a0a !important; border-color: #c62828 !important; color: #ef9a9a !important; }
+      .tbar-btn-blue  { background: #0a1a3a !important; border-color: #1565c0 !important; color: #90caf9 !important; }
+      .tbar-btn-info  { background: #0a0a3a !important; border-color: #5c6bc0 !important; color: #c5cae9 !important; }
+      .tbar-btn-reset { background: #2a0800 !important; border-color: #bf360c !important; color: #ffab91 !important; }
+      .tbar-input {
+        background: #1a1a1a;
+        color: #ffd54f;
+        border: 1px solid #555;
+        border-radius: 3px;
+        padding: 3px 4px;
+        width: 44px;
+        font-size: 10px;
+        font-family: monospace;
+        text-align: center;
+      }
+      .tbar-sep { width: 1px; height: 14px; background: #333; margin: 0 3px; }
+
+      /* ── Data Flow Modal ── */
+      #data-flow-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.9);
+        z-index: 9999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+      }
+      #data-flow-panel {
+        background: #0d0d0d;
+        border: 1px solid #333;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 480px;
+        max-height: 92vh;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 11px;
+      }
+      #dfp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border-bottom: 1px solid #333;
+        color: #90caf9;
+        font-weight: 700;
+        font-size: 12px;
+        position: sticky;
+        top: 0;
+        background: #0d0d0d;
+      }
+      #dfp-header button {
+        background: none !important;
+        border: none !important;
+        color: #888;
+        font-size: 16px;
         cursor: pointer;
       }
-
-      #test-nav-bar button:hover {
-        background: #444;
+      #dfp-body { padding: 8px 12px 14px; }
+      .dfp-section { margin-bottom: 14px; }
+      .dfp-title {
+        color: #ffd54f;
+        font-weight: 700;
+        font-size: 10px;
+        margin-bottom: 5px;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #1e1e1e;
+      }
+      .dfp-note {
+        color: #888;
+        font-size: 9px;
+        margin-top: 4px;
+        line-height: 1.4;
+        padding: 4px 6px;
+        background: #0a0a0a;
+        border-left: 2px solid #333;
+      }
+      .dfp-table { width: 100%; border-collapse: collapse; margin-top: 2px; }
+      .dfp-table th { color: #666; font-size: 9px; text-align: left; padding: 2px 4px; border-bottom: 1px solid #1e1e1e; }
+      .dfp-table td { color: #bbb; font-size: 9px; padding: 3px 4px; border-bottom: 1px solid #141414; vertical-align: top; }
+      .dfp-table td:first-child { color: #81c784; font-weight: 700; white-space: nowrap; }
+      #dfp-live-state {
+        background: #050505;
+        border: 1px solid #1e1e1e;
+        border-radius: 4px;
+        padding: 8px;
+        font-size: 9px;
+        color: #a5d6a7;
+        white-space: pre-wrap;
+        word-break: break-all;
+        margin-top: 4px;
       }
     </style>
+
+
 
     <!-- ═══════════ LOADING OVERLAY ═══════════ -->
     <div id="loading-overlay">
@@ -1386,6 +1656,20 @@
     /* ═══════════════════════════════════════════════════════
        FLIPPIT ENGINE: CORE LOGIC & API
        ═══════════════════════════════════════════════════════ */
+
+    // ── PRODUCTION CONSOLE SILENCER ──────────────────────────
+    // Disables logging unless ?test=true is present
+    (function() {
+      const isTest = new URLSearchParams(window.location.search).get('test');
+      if (!isTest) {
+        const noop = () => {};
+        console.log = noop;
+        console.info = noop;
+        console.debug = noop;
+        // console.warn and console.error are kept for critical tracking
+      }
+    })();
+
 
     // ─────────────────────────────────────────────────────────
     // 1. CONFIGURATION & CONSTANTS
@@ -1644,8 +1928,10 @@
         if (params.get('test')) {
           State.isTestMode = true;
           document.getElementById('test-indicator').style.display = 'block';
-          const nav = document.getElementById('test-nav-bar');
-          if (nav) nav.style.display = 'flex';
+          // Show toggle tab (panel starts COLLAPSED so screen is fully visible)
+          const tab = document.getElementById('test-toggle-tab');
+          if (tab) tab.style.display = 'block';
+          // Nav bar stays hidden until user taps QA ▲ toggle tab
         }
 
         // 2. Capture City (supports 'city' or 'c' short param for smaller QR)
@@ -2294,39 +2580,160 @@ If you think you can even come close to my scorecard, pick up the Times of India
     State.gameId = Utils.getTodayId();
 
     /** ═══════════════════════════════════════════════════════
-        DEV TOOLS (Test Mode Only)
+        DEV TOOLS — QA CONTROL PANEL (Test Mode Only)
         ═══════════════════════════════════════════════════════ */
     window.DevTools = {
-      jumpTo(screen) {
-        if (screen === 'how') {
-          UI.toggleHow(true);
+
+      // Message pools from actual game logic
+      _msgTop: {
+        fast:    'Fastest fingers in town!',
+        fire:    'You\u2019re on fire!',
+        crush:   'You crushed it!',
+        mission: 'Mission accomplished!',
+        default: 'You nailed it!'
+      },
+      _msgBottom: [
+        "Great flip! Another one lands tomorrow. Until then, enjoy the rest of today's paper.",
+        "Well played! A fresh flip awaits tomorrow. For now, keep going through today's newspaper.",
+        "Nice work! Tomorrow brings a new challenge. Until then, flip through today's edition.",
+        "Smooth finish! Another puzzle drops tomorrow. Meanwhile, dive back into today's paper.",
+        "You aced it! Come back for tomorrow's flip. Until then, carry on with today's reading.",
+        "Flip mastered! A new one arrives tomorrow. For now, enjoy the rest of today's newspaper."
+      ],
+      _msgExpire: [
+        "Oops! This flip flopped. Try again tomorrow. Now go catch up on the rest of today's TOI.",
+        "This flip slipped away\u2026 but the rest of today's TOI is waiting for you.",
+        "The puzzle dodged you today\u2014turn the page and keep reading the TOI.",
+        "This one got away\u2026 but there's plenty more to enjoy in today's TOI.",
+        "Your brain fought bravely; the puzzle fought harder. Time to dive back into today's TOI.",
+        "This one slipped away\u2026 but tomorrow is another flip. Go on, continue reading your newspaper."
+      ],
+
+      // ── Get current name (from State or prompt) ──────────────
+      _getName() {
+        return State.userName || 'TestPlayer';
+      },
+
+      // ── Set test name and render result immediately ──────────
+      setName(name) {
+        State.userName = name;
+        console.log('[DevTools] Name set to:', name);
+        // Immediately render the result screen with current name so user sees it
+        this.jumpTo('result', 'fast');
+      },
+
+      promptName() {
+        const n = prompt('Enter a test name:', State.userName || 'Test Player');
+        if (n && n.trim()) this.setName(n.trim());
+      },
+
+      // ── Toggle panel visibility ───────────────────────────────
+      togglePanel() {
+        const bar  = document.getElementById('test-nav-bar');
+        const tab  = document.getElementById('test-toggle-tab');
+        const open = bar.style.display !== 'none';
+        bar.style.display  = open ? 'none' : 'flex';
+        tab.textContent    = open ? 'QA ▲' : 'QA ▼';
+      },
+
+      // ── Cycle through all 6 bottom messages without changing variant ──
+      nextBottomMsg() {
+        const idx = DevTools._lastBottomIdx = ((DevTools._lastBottomIdx === undefined ? -1 : DevTools._lastBottomIdx) + 1) % this._msgBottom.length;
+        const el = document.getElementById('result-msg-bottom');
+        if (el) el.textContent = this._msgBottom[idx];
+        console.log(`[DevTools] Bottom msg #${idx+1}/6: ${this._msgBottom[idx]}`);
+      },
+
+      // ── Cycle through all 6 expire messages without re-routing ──
+      nextExpireMsg() {
+        // Show expired screen first if not already there
+        UI.showScreen('expired');
+        const ei = DevTools._lastExpireIdx = ((DevTools._lastExpireIdx === undefined ? -1 : DevTools._lastExpireIdx) + 1) % this._msgExpire.length;
+        const el = document.getElementById('expired-message');
+        if (el) el.textContent = this._msgExpire[ei];
+        console.log(`[DevTools] Expire msg #${ei+1}/6: ${this._msgExpire[ei]}`);
+      },
+
+      // ── Main jump-to handler ─────────────────────────────────
+      jumpTo(screen, variant) {
+        if (screen === 'game') {
+          State.isComplete = false; 
+          const frame = document.getElementById('game-frame');
+          if (frame && (frame.src === 'about:blank' || !frame.src)) {
+            console.log('[DevTools] Initializing game iframe for QA...');
+            GameBridge.launch();
+          } else {
+            // Already loaded? Just start timer and show screen
+            GameEngine.startTimer();
+            UI.showScreen('game');
+          }
           return;
         }
-
         UI.toggleHow(false);
 
         if (screen === 'result') {
-          // Dummy data for verification
-          UI.showResults({
-            score: 85,
-            timeTaken: 12,
-            msgTop: "FASTEST FINGERS IN TOWN!",
-            msgBottom: "Great flip! Another one lands tomorrow. Until then, enjoy the rest of today's paper.",
-            streak: 5
-          });
+          // Determine score + time from variant or custom inputs
+          let score, timeTaken, msgTop;
+          if (variant === 'custom') {
+            timeTaken = parseInt(document.getElementById('tbar-time').value) || 12;
+            const inputScore = parseInt(document.getElementById('tbar-score').value);
+            // If user typed a score, use it; otherwise calculate based on time + 40 max amuse score
+            score = !isNaN(inputScore) ? inputScore : (59 - timeTaken) + 40;
+            
+            if      (timeTaken <= 20) msgTop = this._msgTop.fast;
+            else if (timeTaken <= 35) msgTop = this._msgTop.fire;
+            else if (timeTaken <= 50) msgTop = this._msgTop.crush;
+            else                      msgTop = this._msgTop.mission;
+          } 
+          // Pre-sets now use the exact formula: (59 - time) + 40
+          else if (variant === 'fast')    { timeTaken = 10; score = (59 - 10) + 40; msgTop = this._msgTop.fast; }    // 89
+          else if (variant === 'fire')   { timeTaken = 28; score = (59 - 28) + 40; msgTop = this._msgTop.fire; }    // 71
+          else if (variant === 'crush')  { timeTaken = 43; score = (59 - 43) + 40; msgTop = this._msgTop.crush; }    // 56
+          else if (variant === 'mission'){ timeTaken = 57; score = (59 - 57) + 40; msgTop = this._msgTop.mission; }  // 42
+          else { timeTaken = 12; score = (59 - 12) + 40; msgTop = this._msgTop.fast; } // 87
+
+          // Cycle through all 6 bottom messages so you can preview each
+          const idx = DevTools._lastBottomIdx = ((DevTools._lastBottomIdx || -1) + 1) % this._msgBottom.length;
+          const msgBottom = this._msgBottom[idx];
+
+          UI.showResults({ score, timeTaken, msgTop, msgBottom, streak: 3 });
+          // Show which message index is active
+          console.log(`[DevTools] Result: variant=${variant}, time=${timeTaken}s, score=${score}, msg#${idx+1}/${this._msgBottom.length}`);
           return;
         }
 
         if (screen === 'expired') {
-          // Trigger random message
-          const pool = ["SCAN TODAY'S PAPER", "TIME'S UP FOR THIS LINK", "CHECK THE LATEST AD"];
-          const msg = pool[Math.floor(Math.random() * pool.length)];
-          document.getElementById('expired-message').textContent = msg;
+          // Cycle through all 6 expire messages
+          const ei = DevTools._lastExpireIdx = ((DevTools._lastExpireIdx || -1) + 1) % this._msgExpire.length;
+          const msgEl = document.getElementById('expired-message');
+          if (msgEl) msgEl.textContent = this._msgExpire[ei];
+          console.log(`[DevTools] Expired msg #${ei+1}/${this._msgExpire.length}`);
         }
 
         UI.showScreen(screen);
       },
 
+      // ── Data Flow Inspector ───────────────────────────────────
+      showDataFlow() {
+        const live = {
+          'State.userName':     State.userName || '(not set)',
+          'State.session.id':   State.session?.id || '(not set)',
+          'State.session.name': State.session?.name || '(not set)',
+          'State.session.token': State.session?.token ? State.session.token.slice(0,24)+'...' : '(not set)',
+          'State.city':         State.city,
+          'State.gameId':       State.gameId || '(not set — AmuseLabs not loaded)',
+          'State.timeLeft':     State.timeLeft + 's',
+          'State.isTestMode':   State.isTestMode,
+          'State.isComplete':   State.isComplete,
+          'localStorage.session':  localStorage.getItem(CONFIG.SESSION_KEY) ? JSON.parse(localStorage.getItem(CONFIG.SESSION_KEY)) : 'EMPTY',
+          'localStorage.offlineQ': localStorage.getItem(CONFIG.OFFLINE_QUEUE_KEY) || 'EMPTY',
+        };
+        const liveEl = document.getElementById('dfp-live-state');
+        if (liveEl) liveEl.textContent = JSON.stringify(live, null, 2);
+        document.getElementById('data-flow-modal').style.display = 'flex';
+      },
+
+      // ── Hard reset ───────────────────────────────────────────
       reset() {
         localStorage.clear();
         window.location.search = '?test=true';

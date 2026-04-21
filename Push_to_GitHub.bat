@@ -19,7 +19,13 @@ git add Run_Local.bat
 git add project_overview.md
 git add flippit_documentation.md
 git add api_specification.md
+git add TECHNICAL_QA.md
 git add Push_to_GitHub.bat
+
+echo [INFO] PRE-PUSH CHECK: Console logs are auto-silenced in index.html (non-test mode).
+echo [INFO] Ensure all debug alert() calls are removed before proceeding.
+echo.
+
 
 :: Optional: add other core directories if needed
 :: git add flippit-next/
