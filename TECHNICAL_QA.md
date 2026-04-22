@@ -42,3 +42,25 @@ The formula is fixed at: **`(59 - time_taken) + min(40, amuseScore)`**.
 1. **Parameter Stability:** "Can you confirm that the `id` field in the `PUZZLE_LOAD` message will never be renamed?"
 2. **Timing Accuracy:** "At what exact millisecond does your internal `timeTaken` counter start/stop?"
 3. **Failover:** "What is the behavior if the puzzle payload fails to load? Will you fire an `error` message we can catch?"
+
+---
+
+## 4. Security & Quality Assurance
+
+### Q: Protecting APIs (Network Tab Visibility)
+**User Concern:** *"Anyone can see the API endpoint in the network tab and potentially submit fake data. How do we solve this?"*
+
+**A: The Strategy (3 Layers):**
+1.  **Token Binding (Implemented):** Every API call (`save-game`) requires a Bearer token. This token is tied to a user's verified phone number. The backend checks if the `user_id` in the score matches the `user_id` encoded in the secure token.
+2.  **Submission Locking (Backend Duty):** Even if an attacker knows the API, the backend should implement a **Daily Play Limit**. Once a user has submitted a score for `game_id=30`, any further attempts (even with a valid token) must be rejected.
+3.  **Server-to-Server Webhooks (Ultimate Fix):** The most secure method for national campaigns is to have AmuseLabs send the score directly to our backend server. This completely removes the "Score" from the user's browser network tab, making tampering impossible.
+
+### Q: Testing the "Expired" Scenario
+**User Concern:** *"What happens if I use `?d=21042026` (Yesterday)?"*
+
+**A: Logic Verification:**
+1.  **Format Support:** The app now supports both `YYYYMMDD` (20260421) and `DDMMYYYY` (21042026).
+2.  **Detection:** If the provided date is strictly in the past (based on IST clock), the app triggers the expiration logic.
+3.  **Visual Verification:** To test this in QA mode:
+    *   **Logic Test:** Visit the app with `?d=20260421` (remove `test=true` to see restricted access). You will see the "START" button vanish and a "Scan today's QR" message appear.
+    *   **UI Test:** While in `?test=true` mode, you can simply click the **⏰ EXPIRED** button in the QA footer to verify the design and message pool, regardless of the Current URL.
