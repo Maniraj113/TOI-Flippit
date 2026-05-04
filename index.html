@@ -10,8 +10,28 @@
 
   <!-- Gotham font is loaded locally (business-approved) — no external font CDN -->
 
-  <!-- html2canvas for share card -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Critical CSS: Applied at the absolute top of head to eliminate "white flash" -->
+  <style>
+    html, body {
+      background-color: #9d071c !important;
+      margin: 0;
+      padding: 0;
+    }
+    /* Hide the app until basic styles are parsed */
+    #app-shell { opacity: 0; transition: opacity 0.2s ease; }
+    #app-shell.ready { opacity: 1; }
+  </style>
+
+  <!-- Resource Hints -->
+  <link rel="preconnect" href="https://bccl.in">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <!-- Preload Critical Assets -->
+  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/GothamBook_2.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" as="image">
+
+  <!-- html2canvas for share card: Added 'defer' to prevent parser blocking -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
   <style>
@@ -482,11 +502,20 @@
 
     .game-iframe-card {
       flex: 1;
-      background: white;
+      background: var(--brand-red); /* Eliminated white flash */
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative; /* For loader positioning */
+    }
+
+    #iframe-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
     }
 
     #game-frame {
@@ -827,127 +856,182 @@
        CSS: TROPHY CARD (Off-screen Generation for WhatsApp)
        ═══════════════════════════════════════════════════════ */
     #capture-card {
-      position: absolute;
-      top: 0;
-      /* Move far off-screen so it doesn't mess with device layout */
-      left: -9999px;
-      width: 720px;
-      height: 900px;
-      background: var(--brand-red);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: var(--font-heading);
+      position: absolute !important;
+      top: 0 !important;
+      left: -9999px !important;
+      width: 600px !important;
+      height: 600px !important;
+      background: #A10E17 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      /* Using your approved Gotham variable with a generic sans-serif fallback for safety */
+      font-family: var(--font-body) !important;
     }
 
-    .cap-header {
-      margin-bottom: 60px;
+    .cap-inner-card {
+      width: 552px !important;
+      height: 552px !important;
+      background: #F17660 !important;
+      border-radius: 12px !important;
+      position: relative !important;
+      overflow: hidden !important;
     }
 
-    .cap-flippit-logo {
-      width: 320px;
-      height: auto;
+    .cap-content-wrapper {
+      position: absolute !important;
+      top: 4px !important;
+      /* Pushed to the absolute top edge */
+      left: 100px !important;
+      width: 352px !important;
+      height: 548px !important;
     }
 
-    /* The Salmon Background Card */
-    .cap-main-box {
-      width: 540px;
-      background: var(--brand-salmon);
-      border-radius: 24px;
-      padding: 60px 40px;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
+    .cap-logo-section {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 352px !important;
+      text-align: center !important;
     }
 
-    .cap-user-heading {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--brand-brown);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 50px;
-      text-align: center;
-      line-height: 1.3;
-      width: 100%;
+    .cap-logo-img {
+      width: 340px !important;
+      height: auto !important;
+      margin: 0 auto !important;
+      margin-top: -10px !important;
+      /* Pulls logo higher to eliminate internal whitespace */
     }
 
-    /* The fused stat boxes */
-    .cap-tiles-grid {
-      display: flex;
-      flex-direction: row;
-      gap: 4px;
-      /* Thin gap between the dark boxes */
-      justify-content: center;
-      width: 100%;
-      max-width: 420px;
-      margin-bottom: 40px;
+    .cap-player-name {
+      position: absolute !important;
+      top: 176px !important;
+      /* Pushed down to ensure 32px gap below the full logo block */
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      /* Brown color */
+      font-size: 32px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      text-transform: uppercase !important;
+      white-space: nowrap !important;
+      letter-spacing: -0.01em !important;
     }
 
-    .cap-stat-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
+    .cap-achievement {
+      position: absolute !important;
+      top: 226px !important;
+      /* 176 + 38 (name) + 12px gap */
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      font-size: 32px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      text-transform: uppercase !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+      letter-spacing: -0.01em !important;
     }
 
-    .cap-tile-icon {
-      font-size: 40px;
-      /* Larger emojis for the high-res image */
-      line-height: 1;
+    .cap-stats-group {
+      position: absolute !important;
+      top: 300px !important;
+      /* Achievement Bottom (226+38) + 36px Gap */
+      left: 46px !important;
+      width: 260px !important;
+      height: 142px !important;
     }
 
-    .cap-result-tile {
-      width: 100%;
-      background: var(--brand-brown);
-      padding: 24px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
+    .cap-stat-wrapper {
+      position: absolute !important;
+      top: 0 !important;
+      width: 126px !important;
+      height: 132px !important;
     }
 
-    /* Sharp inner edges, rounded outer edges */
-    .cap-stat-group:first-child .cap-result-tile {
-      border-radius: 16px 0 0 16px;
+    .cap-stat-wrapper.left {
+      left: 0 !important;
     }
 
-    .cap-stat-group:last-child .cap-result-tile {
-      border-radius: 0 16px 16px 0;
+    .cap-stat-wrapper.right {
+      left: 134px !important;
     }
 
-    .cap-tile-label {
-      font-size: 16px;
-      font-weight: 600;
-      opacity: 0.9;
-      margin-bottom: 8px;
-      letter-spacing: 0.02em;
+    .cap-icon-wrap {
+      position: absolute !important;
+      top: 0 !important;
+      left: 42px !important;
+      /* (126 - 42)/2 = 42 */
+      width: 42px !important;
+      height: 48px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 40px !important;
+      /* Increased icon size */
     }
 
-    .cap-tile-value {
-      font-size: 32px;
-      font-weight: 900;
-      line-height: 1;
+    .cap-stat-box {
+      position: absolute !important;
+      top: 58px !important;
+      /* 48px Icon height + 10px Gap */
+      left: 0 !important;
+      width: 126px !important;
+      height: 80px !important;
+      background: #540000 !important;
+      color: #FFFFFF !important;
+      overflow: hidden !important;
+      padding: 12px !important;
+      /* Rule 8: 12px padding */
+      text-align: left !important;
+      /* Rule 8: Left aligned text */
+      box-sizing: border-box !important;
+      border-radius: 0 !important;
     }
 
-    /* Date pinned to the bottom right of the salmon card */
-    .cap-footer-date {
-      position: absolute;
-      bottom: 24px;
-      right: 32px;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--brand-brown);
-      letter-spacing: 0.05em;
-      opacity: 0.75;
+    /* Specific border radii for left and right boxes */
+    .cap-stat-wrapper.left .cap-stat-box {
+      border-radius: 12px 0 0 12px !important;
+    }
+
+    .cap-stat-wrapper.right .cap-stat-box {
+      border-radius: 0 12px 12px 0 !important;
+    }
+
+    .cap-label {
+      display: block !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+      margin-bottom: 4px !important;
+      opacity: 0.9 !important;
+      text-align: left !important;
+      /* Force left align */
+      color: #FFFFFF !important;
+    }
+
+    .cap-value {
+      display: block !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      text-align: left !important;
+      /* Force left align */
+      color: #FFFFFF !important;
+    }
+
+    .cap-date {
+      position: absolute !important;
+      top: 466px !important;
+      /* Stats Bottom (300+142) + 24px Gap */
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      text-align: center !important;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -1020,6 +1104,7 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
+
   </style>
 </head>
 
@@ -1029,41 +1114,41 @@
     <!-- ═══════════════════════════════════════════════════════
          HTML: TROPHY CARD (Off-screen for Sharing)
          ═══════════════════════════════════════════════════════ -->
-    <!-- ═══════════════════════════════════════════════════════
-         HTML: TROPHY CARD (Off-screen for Sharing)
-         ═══════════════════════════════════════════════════════ -->
-    <div id="capture-card">
-      <div class="cap-header">
-        <img src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" alt="Flippit"
-          class="cap-flippit-logo">
-      </div>
+    <!-- Hidden with display:none to prevent browser from fetching images during initial load -->
+    <div id="capture-card" style="display: none;">
+      <div class="cap-inner-card">
+        <div class="cap-content-wrapper">
 
-      <div class="cap-main-box">
-        <div class="cap-user-heading">
-          <span id="cc-name-node">PLAYER</span> FLIPPEDIT TODAY
-        </div>
+          <div class="cap-logo-section">
+            <img class="cap-logo-img" src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-02.png"
+              alt="TOI Logo">
+          </div>
 
-        <div class="cap-tiles-grid">
+          <div class="cap-player-name" id="cc-name-node">&nbsp;</div>
 
-          <div class="cap-stat-group">
-            <div class="cap-tile-icon">⏱️</div>
-            <div class="cap-result-tile">
-              <div class="cap-tile-label">Solved in</div>
-              <div class="cap-tile-value"><span id="cc-time">0</span>s</div>
+          <div class="cap-achievement">FLIPPED IT TODAY</div>
+
+          <div class="cap-stats-group">
+            <div class="cap-stat-wrapper left">
+              <div class="cap-icon-wrap left">⏱️</div>
+              <div class="cap-stat-box">
+                <div class="cap-label">Solved in</div>
+                <div class="cap-value"><span id="cc-time-node">0</span> secs</div>
+              </div>
+            </div>
+
+            <div class="cap-stat-wrapper right">
+              <div class="cap-icon-wrap right">⭐</div>
+              <div class="cap-stat-box">
+                <div class="cap-label">Score</div>
+                <div class="cap-value"><span id="cc-score-node">0</span>/100</div>
+              </div>
             </div>
           </div>
 
-          <div class="cap-stat-group">
-            <div class="cap-tile-icon">⭐</div>
-            <div class="cap-result-tile">
-              <div class="cap-tile-label">Score</div>
-              <div class="cap-tile-value"><span id="cc-score">0</span>/100</div>
-            </div>
-          </div>
+          <div class="cap-date" id="cc-date-node">23/04/2026</div>
 
         </div>
-
-        <div class="cap-footer-date" id="cc-date-full">22/04/2026</div>
       </div>
     </div>
 
@@ -1196,9 +1281,13 @@
     <div id="screen-game" class="screen">
       <div class="playing-as-bar">PLAYING AS: <span id="playing-as-name"></span></div>
       <div class="game-iframe-wrap">
-        <div class="game-iframe-card">
+        <div class="game-iframe-card" style="position: relative;">
+          <!-- Loading Spinner -->
+          <div id="iframe-loader" class="spinner show"></div>
+
           <iframe id="game-frame" title="Flippit Game" allowfullscreen
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" scrolling="no"></iframe>
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" scrolling="no"
+            onload="GameBridge.onIframeLoad()"></iframe>
         </div>
       </div>
     </div>
@@ -1826,6 +1915,18 @@
 
   </div><!-- #app-shell -->
 
+  <!-- Fast-Boot: Isolated script for instant render -->
+  <script>
+    (function () {
+      const shell = document.getElementById('app-shell');
+      if (shell) shell.classList.add('ready');
+      const splash = document.getElementById('screen-splash');
+      if (splash) splash.classList.add('active');
+      console.log('[Fast-Boot] Splash screen triggered.');
+    })();
+  </script>
+
+  <!-- Game Engine: Large monolithic logic follows -->
   <script>
     /* ═══════════════════════════════════════════════════════
        FLIPPIT ENGINE: CORE LOGIC & API
@@ -1840,7 +1941,6 @@
         console.log = noop;
         console.info = noop;
         console.debug = noop;
-        // console.warn and console.error are kept for critical tracking
       }
     })();
 
@@ -1874,7 +1974,9 @@
       shareBlob: null,   // Cache for the generated card
       city: 'TOIIN',     // Captured from URL ?city=...
       qrDate: null,      // Captured from URL ?date=YYYYMMDD
-      isTestMode: false  // Persists even after URL is cleaned
+      isTestMode: false,  // Persists even after URL is cleaned
+      isGameWarm: false,
+      isLaunching: false
     };
 
     // ─────────────────────────────────────────────────────────
@@ -2419,24 +2521,15 @@
 
         // Update Share Card
         const ccName = document.getElementById('cc-name-node');
-        const ccHeading = document.querySelector('.cap-user-heading');
         if (ccName) {
           ccName.textContent = name.toUpperCase();
-          // Auto-shrink font if name is long to keep it on one line
-          if (name.length > 18) {
-            ccHeading.style.fontSize = '13px';
-          } else if (name.length > 12) {
-            ccHeading.style.fontSize = '16px';
-          } else {
-            ccHeading.style.fontSize = '20px'; // Default: matches Mission Accomplished
-          }
         }
 
         const dd = String(now.getDate()).padStart(2, '0');
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const yyyy = now.getFullYear();
         const dateFull = `${dd}/${mm}/${yyyy}`;
-        const ccDate = document.getElementById('cc-date-full');
+        const ccDate = document.getElementById('cc-date-node');
         if (ccDate) ccDate.textContent = dateFull;
 
         document.getElementById('result-msg-top').textContent = data.msgTop;
@@ -2445,7 +2538,7 @@
         // Stats grid
         const maps = {
           'r-time': data.timeTaken, 'r-score': data.score,
-          'cc-time': data.timeTaken, 'cc-score': data.score
+          'cc-time-node': data.timeTaken, 'cc-score-node': data.score
         };
         Object.keys(maps).forEach(id => {
           const el = document.getElementById(id);
@@ -2472,6 +2565,9 @@
         State.shareBlob = null;
         try {
           const card = document.getElementById('capture-card');
+          // Temporarily show the card so images can be fetched and canvas can render
+          card.style.display = 'block';
+
           const images = card.getElementsByTagName('img');
           await Promise.all(Array.from(images).map(img => {
             if (img.complete) return Promise.resolve();
@@ -2480,15 +2576,17 @@
 
           const canvas = await html2canvas(card, {
             useCORS: true, scale: 2, logging: false,
-            backgroundColor: '#990000', allowTaint: true
+            backgroundColor: null, allowTaint: true
           });
 
           canvas.toBlob((blob) => {
             State.shareBlob = blob;
             console.log('[Share] Trophy card generated.');
+            card.style.display = 'none'; // Hide it back
           }, 'image/png');
         } catch (e) {
           console.error('[Share] Card generation failed:', e);
+          document.getElementById('capture-card').style.display = 'none';
         }
       },
 
@@ -2561,8 +2659,17 @@
           if (type.includes('LOAD')) {
             const puzzleId = data.id || data.puzzleId;
             if (puzzleId) State.gameId = String(puzzleId);
-            // Protect against instant-fire: only start timer if we aren't already complete
-            if (!State.isComplete) GameEngine.startTimer();
+            
+            State.isGameWarm = true; 
+            document.getElementById('iframe-loader').classList.remove('show');
+            UI.setLoading(false); 
+
+            // If we are currently "launching", show the screen and start timer
+            if (State.isLaunching) {
+              State.isLaunching = false;
+              UI.showScreen('game');
+              GameEngine.startTimer();
+            }
           }
 
           // Safety: Ignore solve messages for the first 1.5s after a launch 
@@ -2585,20 +2692,41 @@
         });
       },
 
-      /** Load puzzle in iframe */
-      launch() {
-        GameBridge._lastLaunch = Date.now();
+      /** Load puzzle in background without showing screen */
+      warmUp() {
+        if (State.isGameWarm) return;
+        console.log('[GameBridge] Warming up game iframe...');
         let uid = State.session?.id || 'anonymous';
-        // IMPORTANT for QA: In Test Mode, we append a random seed to the UID.
-        // This informs AmuseLabs that we are a "new" player, forcing a fresh puzzle reset.
         if (State.isTestMode) {
           uid = (State.session?.id || 'test') + '-' + Math.floor(Math.random() * 999999);
         }
         const url = `${CONFIG.PUZZLE_BASE}&uid=${uid}`;
         document.getElementById('game-frame').src = url;
+      },
+
+      /** Reveal the warmed-up game or load fresh if needed */
+      launch() {
+        GameBridge._lastLaunch = Date.now();
         document.getElementById('playing-as-name').textContent = (State.userName || 'PLAYER').toUpperCase();
-        UI.showScreen('game');
-      }
+        
+        if (State.isGameWarm) {
+          UI.showScreen('game');
+          GameEngine.startTimer();
+        } else {
+          State.isLaunching = true;
+          UI.setLoading(true);
+          this.warmUp();
+        }
+      },
+
+      /** Triggered by iframe onload or message */
+      onIframeLoad() {
+        // Fallback for non-AmuseLabs messages or slow loads
+        // We still wait for the LOAD message for the gameId, but this removes the spinner
+        console.log('[GameBridge] Iframe onload fired');
+      },
+
+      /** Start the actual game timer after user is ready */
     };
 
     // ─────────────────────────────────────────────────────────
@@ -2606,54 +2734,49 @@
     // ─────────────────────────────────────────────────────────
 
     // --- Start / Splash ---
-    document.getElementById('start-btn').addEventListener('click', async () => {
+    document.getElementById('start-btn').addEventListener('click', () => {
       const saved = Utils.session.load();
       if (!saved) { UI.showScreen('login'); return; }
 
       State.session = saved;
-      UI.setLoading(true);
-      try {
-        await GameEngine.checkDailyLock(saved.id, saved.token,
-          (log, stats) => {
-            State.userName = saved.name || 'Player';
-            const status = (log.status || '').toLowerCase();
-            const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
-            const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+      State.userName = saved.name || 'Player';
 
-            if (isFinal && !State.isTestMode) {
-              if (status === 'expired' || status === 'failure') {
-                const msgEl = document.getElementById('expired-message');
-                if (msgEl) msgEl.textContent = GameEngine.getExpireMessage();
-                UI.showScreen('expired');
-              } else {
-                const rawTime = Number(log.time_taken) || 60;
-                UI.showResults({
-                  ...GameEngine.calculateResults(rawTime, allLogs, log.score || 0),
-                  streak: Number(stats.streak) || 1,
-                  bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
-                });
-              }
-            } else if (isFinal && State.isTestMode) {
+      // 1. Optimistic Launch: Start the game immediately
+      console.log('[StartBtn] Optimistic launch triggered...');
+      GameBridge.launch();
+
+      // 2. Background Check: Verify status while game is already loading
+      GameEngine.checkDailyLock(saved.id, saved.token,
+        (log, stats) => {
+          const status = (log.status || '').toLowerCase();
+          const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
+          const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+
+          if (isFinal && !State.isTestMode) {
+            // If they already played, "pull them back" to the result/expired screen
+            console.log('[StartBtn] User already played, redirecting...');
+            if (status === 'expired' || status === 'failure') {
+              const msgEl = document.getElementById('expired-message');
+              if (msgEl) msgEl.textContent = GameEngine.getExpireMessage();
+              UI.showScreen('expired');
+            } else {
               const rawTime = Number(log.time_taken) || 60;
               UI.showResults({
                 ...GameEngine.calculateResults(rawTime, allLogs, log.score || 0),
                 streak: Number(stats.streak) || 1,
-                bestStreak: Number(stats.bestStreak || stats.best_weeks) || 1
+                bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
               });
-            } else {
-              State.userName = saved.name || 'Player';
-              GameBridge.launch();
             }
-          },
-          () => {
-            State.userName = saved.name || 'Player';
-            GameBridge.launch();
           }
-        );
-      } catch (err) {
-        console.error('[StartBtn] Error during daily lock check:', err);
-        UI.showScreen('login');
-      } finally { UI.setLoading(false); }
+          // If not final, just let them keep playing (they are already on the game screen)
+        },
+        () => {
+          // New user or no play today — carry on
+          console.log('[StartBtn] Permission confirmed in background.');
+        }
+      ).catch(err => {
+        console.warn('[StartBtn] Background check failed (fail-open):', err);
+      });
     });
 
     // --- How to Play ---
@@ -2693,7 +2816,17 @@
         const session = { id: res.UserId, name: res.UserName || '', token: res.token };
         Utils.session.save(session);
 
-        await GameEngine.checkDailyLock(session.id, session.token,
+        // 1. Optimistic Launch after Login
+        if (State.isTestMode || !res.UserName || res.UserName === 'Test') {
+          if (res.UserName) State.userName = res.UserName;
+          UI.showScreen('register');
+        } else {
+          State.userName = res.UserName;
+          GameBridge.launch();
+        }
+
+        // 2. Background Lock Check
+        GameEngine.checkDailyLock(session.id, session.token,
           (log, stats) => {
             State.userName = res.UserName;
             const status = (log.status || '').toLowerCase();
@@ -2708,23 +2841,12 @@
                 const rawTime = Number(log.time_taken) || 60;
                 UI.showResults({ ...GameEngine.calculateResults(rawTime, stats.gameLogs || stats.logs || [], log.score || 0) });
               }
-            } else if (isFinal && State.isTestMode) {
-              UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60, stats.gameLogs || stats.logs || [], log.score || 0) });
-            } else {
-              GameBridge.launch();
             }
           },
           () => {
-            // In Test Mode, always show register page first so they can edit name as requested
-            if (State.isTestMode || !res.UserName || res.UserName === 'Test') {
-              if (res.UserName) State.userName = res.UserName;
-              UI.showScreen('register');
-            } else {
-              State.userName = res.UserName;
-              GameBridge.launch();
-            }
+            console.log('[VerifyOTP] Permission confirmed in background.');
           }
-        );
+        ).catch(e => console.warn('[VerifyOTP] Background check failed:', e));
       } catch (e) { alert('Verification Failed: ' + e.message); }
       finally { UI.setLoading(false); }
     };
@@ -2773,10 +2895,20 @@
     // ─────────────────────────────────────────────────────────
     GameBridge.init();
 
+
+
     // Check URL parameters on load
     const isValidLink = Utils.initQueryParams();
     // Start on splash regardless (splash will show error if link invalid)
     UI.showScreen('splash');
+
+    // WARM-UP: If session exists, start loading the game hidden in the background now!
+    const initSaved = Utils.session.load();
+    if (initSaved) {
+      State.session = initSaved;
+      State.userName = initSaved.name || 'Player';
+      GameBridge.warmUp();
+    }
 
     // ─────────────────────────────────────────────────────────
     State.gameId = Utils.getTodayId();
