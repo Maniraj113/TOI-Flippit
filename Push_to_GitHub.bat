@@ -21,6 +21,8 @@ git add flippit_documentation.md
 git add api_specification.md
 git add TECHNICAL_QA.md
 git add Push_to_GitHub.bat
+git add index_production_6box.html
+git add index_production.html
 
 echo [INFO] PRE-PUSH CHECK: Console logs are auto-silenced in index.html (non-test mode).
 echo [INFO] Ensure all debug alert() calls are removed before proceeding.
