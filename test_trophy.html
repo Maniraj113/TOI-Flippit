@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOI Flippit Trophy Card Tester</title>
+    <style>
+        :root {
+            --brand-red: #A10E17;
+            --brand-salmon: #F17660;
+            --brand-brown: #540000;
+            --text-dark: #3C080B;
+        }
+
+        body {
+            background: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: var(--font-body, 'Gotham'), sans-serif;
+        }
+
+        /* The Outer 600x600 Container */
+        #capture-card {
+            width: 600px;
+            height: 600px;
+            background: var(--brand-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* The Inner 552x552 Salmon Card */
+        .cap-inner-card {
+            width: 552px;
+            height: 552px;
+            background: var(--brand-salmon);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Content Wrapper (Figma's .v32_1802) */
+        /* Top: 46px, Left: 116px, Width: 320px, Height: 460px */
+        .cap-content-wrapper {
+            position: absolute;
+            top: 4px;
+            left: 100px;
+            width: 352px;
+            height: 548px;
+        }
+
+        /* Logo Section */
+        .cap-logo-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 352px;
+            text-align: center;
+        }
+
+        .cap-logo-img {
+            width: 340px;
+            height: auto;
+            margin: 0 auto;
+            margin-top: -10px;
+        }
+
+        /* Player Label (Figma .v32_1782) */
+        .cap-player-label {
+            position: absolute;
+            top: 160px;
+            /* Moved down to avoid logo overlap */
+            left: 0;
+            width: 320px;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Player Name (Figma .v32_1783) */
+        .cap-player-name {
+            position: absolute;
+            top: 176px; 
+            left: 0;
+            width: 352px;
+            color: var(--brand-brown);
+            font-size: 38px;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+        }
+
+        /* Achievement Text (Figma .v32_1786) */
+        .cap-achievement {
+            position: absolute;
+            top: 226px; 
+            left: 0;
+            width: 352px;
+            color: var(--brand-brown);
+            font-size: 32px;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 1.2;
+            white-space: nowrap; 
+            letter-spacing: -0.01em;
+        }
+
+        /* Stats Group (Figma .v32_1787) */
+        .cap-stats-group {
+            position: absolute;
+            top: 300px; 
+            left: 46px; 
+            width: 260px;
+            height: 142px;
+        }
+
+        /* Individual Stat Wrapper (Figma .v32_1788 / .v32_1794) */
+        .cap-stat-wrapper {
+            position: absolute;
+            top: 0;
+            width: 126px; /* Updated to 126px as per Figma screenshot */
+            height: 132px;
+        }
+
+        .cap-stat-wrapper.left {
+            left: 0;
+        }
+
+        .cap-stat-wrapper.right {
+            left: 134px; /* 126 + 8 gap */
+        }
+
+        /* Icon Wrapper (Figma .v32_1789) */
+        .cap-icon-wrap {
+            position: absolute;
+            top: 0;
+            left: 42px;
+            width: 42px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .cap-stat-box {
+            position: absolute;
+            top: 58px;
+            left: 0;
+            width: 126px;
+            height: 80px;
+            background: #540000;
+            color: #FFFFFF;
+            overflow: hidden;
+            padding: 12px;
+            text-align: left;
+            box-sizing: border-box;
+        }
+
+        /* Specific border radii for left and right boxes */
+        .cap-stat-wrapper.left .cap-stat-box {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .cap-stat-wrapper.right .cap-stat-box {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Label in box (Figma .v32_1792) */
+        .cap-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            opacity: 0.9;
+        }
+
+        /* Value in box (Figma .v32_1793) */
+        .cap-value {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Date (Figma .v32_1801) */
+        .cap-date {
+            position: absolute;
+            top: 466px;
+            left: 0;
+            width: 352px;
+            color: var(--brand-brown);
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 250px;
+        }
+
+        .controls h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .controls p {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="controls">
+        <h2>Visual Tester</h2>
+        <p>This screen is a standalone replica of the Trophy Card built with Figma's exact absolute positioning.</p>
+        <p>Compare this to your "Approved" image. If it matches, we apply this CSS to index.html.</p>
+        <button
+            onclick="document.body.style.background = (document.body.style.background === 'white' ? '#333' : 'white')">Toggle
+            Background</button>
+    </div>
+
+    <div id="capture-card">
+        <div class="cap-inner-card">
+            <div class="cap-content-wrapper">
+
+                <!-- Logo -->
+                <div class="cap-logo-section">
+                    <img class="cap-logo-img"
+                        src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-02.png" alt="TOI Logo">
+                </div>
+
+                <!-- Player -->
+
+                <div class="cap-player-name">MANIRAJ</div>
+
+                <!-- Achievement -->
+                <div class="cap-achievement">FLIPPED IT TODAY</div>
+
+                <!-- Stats Grid -->
+                <div class="cap-stats-group">
+
+                    <!-- Left Stat: Solved in -->
+                    <div class="cap-stat-wrapper left">
+                        <div class="cap-icon-wrap">⏱️</div>
+                        <div class="cap-stat-box">
+                            <div class="cap-label">Solved in</div>
+                            <div class="cap-value">10 secs</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Stat: Score -->
+                    <div class="cap-stat-wrapper right">
+                        <div class="cap-icon-wrap">⭐</div>
+                        <div class="cap-stat-box">
+                            <div class="cap-label">Your Score</div>
+                            <div class="cap-value">89/100</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Date -->
+                <div class="cap-date">24/04/2026</div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

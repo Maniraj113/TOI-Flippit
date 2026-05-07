@@ -10,11 +10,33 @@
 
   <!-- Gotham font is loaded locally (business-approved) — no external font CDN -->
 
-  <!-- html2canvas for share card -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Critical CSS: Applied at the absolute top of head to eliminate "white flash" -->
+  <style>
+    html,
+    body {
+      background-color: #9d071c !important;
+      margin: 0;
+      padding: 0;
+    }
 
-  <!-- canvas-confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    #app-shell {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+  </style>
+
+  <!-- Resource Hints -->
+  <link rel="preconnect" href="https://bccl.in">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <!-- Preload Critical Assets -->
+  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/GothamBook_2.ttf" as="font" type="font/ttf"
+    crossorigin>
+  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" as="image">
+
+  <!-- html2canvas for share card: Added 'defer' to prevent parser blocking -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
   <style>
     /* ═══════════════════════════════════════════════════════
@@ -22,29 +44,30 @@
        ═══════════════════════════════════════════════════════ */
     @font-face {
       font-family: 'Gotham';
-      src: url('./GothamBook_2.ttf') format('truetype');
+      /* Pointing to the file found in Archieve directory */
+      src: url('https://bccl.in/wp-content/uploads/2026/04/GothamBook_2.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
-    }
-
-    @font-face {
-      font-family: 'TOIBold';
-      src: url('./POSDSB[94].otf') format('opentype');
-      font-weight: bold;
+      font-display: swap;
+      /* iOS FOIT fix: show system font until Gotham loads */
     }
 
     :root {
       --brand-red: #9d071c;
       --brand-brown: #540000;
       --brand-salmon: #F17660;
-      --brand-dark-red: #990000;
-      /* ──── Gotham is the ONLY font (business-approved) ──── */
-      --font-main: 'Gotham', sans-serif;
-      --font-bold: 'TOIBold', 'Gotham', sans-serif;
-      /* Aliases so all var() references resolve to Gotham */
-      --font-gotham: 'Gotham', sans-serif;
-      --font-outfit: 'Gotham', sans-serif;
-      --font-playfair: 'Gotham', sans-serif;
+
+
+      /* ──── PROFESSIONALLY UNIFORM FONT SYSTEM ──── */
+      /* Gotham is primary,  */
+      --font-heading: 'Gotham';
+      --font-body: 'Gotham';
+      --font-numbers: 'Gotham';
+
+      /* Standardized Line Heights */
+      --lh-heading: 1.2;
+      --lh-body: 1.5;
+      --lh-tight: 1.1;
     }
 
     *,
@@ -53,7 +76,8 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: var(--font-main);
+      font-family: var(--font-body);
+      line-height: var(--lh-body);
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -126,21 +150,24 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       background-color: var(--brand-brown);
       color: white;
-      padding: 12px 28px;
+      padding: 4px 6px;
       border-radius: 4px;
-      font-family: var(--font-playfair);
-      font-weight: 700;
-      font-size: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1;
+      border: none;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
       text-transform: uppercase;
-      min-width: 160px;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
       outline: none;
+      white-space: nowrap;
+      width: fit-content;
+      align-self: center;
     }
 
     .btn-primary:active {
@@ -161,12 +188,12 @@
       width: 100%;
       background: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 10px;
       padding: 14px 16px;
       font-size: 18px;
       text-align: center;
       color: black;
-      font-family: var(--font-main);
+      font-family: var(--font-body);
       outline: none;
       transition: box-shadow 0.2s;
     }
@@ -179,10 +206,10 @@
     #mobile-input {
       max-width: 240px;
       letter-spacing: 3px;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       align-self: center;
-      padding: 12px 14px;
+      padding: 14px;
     }
 
     /* ── OTP Boxes UI ── */
@@ -191,7 +218,7 @@
       height: 52px;
       background: white;
       border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 24px;
       text-align: center;
       font-weight: 800;
@@ -219,9 +246,8 @@
     }
 
     #generic-header img {
-      height: 120px;
-      width: auto;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+      width: 280px;
+      height: auto;
     }
 
     #game-header {
@@ -237,15 +263,14 @@
     }
 
     #game-header img {
-      height: 64px;
+      height: 48px;
       width: auto;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
     }
 
     #timer-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       color: white;
       background: var(--brand-brown);
       padding: 6px 14px;
@@ -278,7 +303,8 @@
       font-weight: 900;
       line-height: 1;
       min-width: 44px;
-      font-family: var(--font-outfit);
+      font-family: var(--font-numbers);
+      line-height: var(--lh-tight);
       text-align: center;
     }
 
@@ -298,8 +324,7 @@
     }
 
     #screen-splash .logo-wrap img {
-      width: 100%;
-      max-width: 280px;
+      width: 280px;
       height: auto;
     }
 
@@ -345,29 +370,33 @@
 
     .auth-heading {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 10px;
     }
 
-    .auth-heading h2 {
-      font-size: 24px;
-      font-weight: 900;
+    .auth-heading h2,
+    .auth-heading h3 {
+      font-size: 18px;
+      font-weight: 700;
       margin-bottom: 10px;
       letter-spacing: 0.05em;
-      font-family: var(--font-outfit);
+      font-family: var(--font-heading);
+      line-height: var(--lh-heading);
+      color: white;
+
     }
 
     .auth-heading .auth-sub {
-      font-size: 14px;
+      font-size: 18px;
       color: rgba(255, 255, 255, 0.9);
       font-weight: 700;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
+
       margin-bottom: 4px;
     }
 
     .auth-heading .auth-note {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
       font-weight: 400;
       font-style: italic;
     }
@@ -381,7 +410,8 @@
     .auth-fields {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      align-items: center;
+      gap: 12px;
     }
 
     .mobile-row {
@@ -431,7 +461,7 @@
     }
 
     .register-note {
-      font-size: 14px;
+      font-size: 15px;
       color: rgba(255, 255, 255, 0.6);
       margin-top: 12px;
       font-style: italic;
@@ -481,6 +511,8 @@
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      /* Ensure overlay can be absolute */
     }
 
     #game-frame {
@@ -488,6 +520,55 @@
       height: 100%;
       border: none;
       display: block;
+    }
+
+    /* ─── Iframe loading overlay (sits on top of iframe until puzzle LOAD fires) ─── */
+    #iframe-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+      border-radius: 24px;
+      transition: opacity 0.4s ease;
+    }
+
+    #iframe-loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #iframe-loading-overlay .spinner {
+      border: 3px solid rgba(157, 7, 28, 0.15);
+      border-top-color: var(--brand-red);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    #iframe-loading-overlay p {
+      margin-top: 16px;
+      color: var(--brand-brown);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ─── Iframe loading timeout warning ─── */
+    #iframe-timeout-msg {
+      display: none;
+      margin-top: 8px;
+      color: var(--brand-red);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 20px;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -498,161 +579,196 @@
       display: none;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       background: var(--brand-red);
       overflow-y: auto;
-      padding: 40px 0;
+      padding: 0;
     }
 
     #screen-result.active {
       display: flex;
     }
 
+    #screen-expired {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background: var(--brand-red);
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    #screen-expired.active {
+      display: flex;
+    }
+
     .result-inner {
-      padding: 0 20px;
+      padding: 40px 25px;
+      /* Explicit padding to force rectangle space */
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 400px;
+      max-width: 330px;
+      /* Narrower max-width for clear "rectangular" feel */
     }
 
     .result-logo {
-      height: 60px;
-      width: auto;
-      margin-bottom: 30px;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+      width: 280px;
+      height: auto;
+    }
+
+    .expired-icon {
+      width: 140px;
+      height: auto;
+      margin: 10px 0 25px;
+      display: block;
+      flex-shrink: 0;
+      color: var(--brand-brown);
     }
 
     .result-card {
       width: 100%;
       background: var(--brand-salmon);
-      border-radius: 32px;
-      padding: 40px 24px 32px;
+      border-radius: 12px;
+      padding: 24px;
+      /* Default padding, but heading will push down */
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       position: relative;
     }
 
     .btn-close-result {
       position: absolute;
-      top: 20px;
-      right: 24px;
+      top: 15px;
+      right: 15px;
       background: none;
       border: none;
-      color: rgba(84, 0, 0, 0.4);
-      font-size: 26px;
+      color: rgba(84, 0, 0, 0.3);
+      font-size: 20px;
       cursor: pointer;
       line-height: 1;
-      padding: 4px;
-      z-index: 5;
     }
 
     .result-msg-top {
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 20px;
+      font-weight: 900;
       color: var(--brand-brown);
-      margin-bottom: 24px;
-      font-family: var(--font-gotham);
-      text-transform: none;
-      letter-spacing: -0.01em;
+      margin: 40px 0 30px;
+      font-family: var(--font-heading);
       text-align: center;
+      letter-spacing: 0.02em;
     }
 
     .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
       width: 100%;
-      margin-bottom: 24px;
+      max-width: 196px;
+      /* Reduced to eliminate empty space while keeping boxes equal size */
+      justify-content: center;
+      margin: 0 auto 35px auto;
+    }
+
+    .stat-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* keep icon centered relative to tile */
+      flex: 1;
+      gap: 6px;
+    }
+
+    .stat-icon-up {
+      font-size: 26px;
+      line-height: 1;
+      height: 30px;
     }
 
     .stat-tile {
       background: var(--brand-brown);
-      border-radius: 12px;
-      padding: 20px 10px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
+      /* Left aligned */
+      justify-content: center;
       color: white;
-      text-align: center;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
+      /* Ensures no text is left over/wrapping */
     }
 
-    .stat-icon-up {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .stat-group:first-child .stat-tile {
+      border-radius: 6px 2px 2px 6px;
+    }
+
+    .stat-group:last-child .stat-tile {
+      border-radius: 2px 6px 6px 2px;
     }
 
     .stat-label-small {
       font-size: 13px;
       font-weight: 500;
-      opacity: 0.9;
-      margin-bottom: 4px;
+      /* Reduced from 700 */
+      font-family: var(--font-body);
+      opacity: 0.95;
+      margin-bottom: 2px;
     }
 
     .stat-value-large {
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1;
-      font-family: var(--font-outfit);
+      font-size: 15px;
+      font-weight: 600;
+      /* Reduced from 900 */
+      font-family: var(--font-body);
     }
 
     .result-msg-bottom {
-      font-size: 15px;
+      font-size: 13px;
       color: var(--brand-brown);
-      font-weight: 600;
-      line-height: 1.5;
+      font-weight: 700;
+      /* Slightly bolder for readability */
+      line-height: 1.6;
       text-align: center;
-      margin: 10px 0 24px;
-      max-width: 280px;
-      opacity: 0.9;
+      margin: 0 0 35px;
+      max-width: 220px;
     }
 
     .btn-share {
-      padding: 14px 28px;
-      font-size: 18px;
-      border-radius: 8px;
-      background: white;
-      color: var(--brand-brown);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      width: auto;
-      min-width: 160px;
-      font-weight: 900;
+      /* gap: 6px; */
+      padding: 4px 8px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      font-weight: bold;
+      -webkit-text-stroke: 0.5px var(--brand-brown);
+      border-radius: 4px;
+      background: white;
+      color: var(--brand-brown);
       border: none;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
       cursor: pointer;
-      font-family: var(--font-gotham);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      transition: transform 0.2s, opacity 0.2s;
+      white-space: nowrap;
     }
 
     .btn-share:active {
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     .btn-share svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .btn-share:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-
-    .btn-share:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+      width: 16px;
+      height: 16px;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -663,9 +779,12 @@
       position: fixed;
       inset: 0;
       z-index: 1000;
-      background: rgba(0, 0, 0, 0.85);
-      align-items: flex-end;
+      background: rgba(84, 0, 0, 0.85);
+      /* Branded deep brown-red backdrop */
+      align-items: center;
       justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(8px);
     }
 
     #how-overlay.open {
@@ -674,236 +793,286 @@
 
     .how-panel {
       width: 100%;
-      max-width: 430px;
-      border-radius: 40px 40px 0 0;
-      background: var(--brand-brown);
-      padding: 40px 24px 56px;
+      max-width: 320px;
+      border-radius: 20px;
+      background: var(--brand-salmon);
+      /* Branded card color */
+      padding: 36px 24px 28px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .how-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
-    .how-header h2 {
-      font-size: 22px;
+    .how-header h2,
+    .how-header-title {
+      font-size: 18px;
       font-weight: 900;
+      color: var(--brand-brown);
       letter-spacing: 0.05em;
-      font-family: var(--font-outfit);
+      font-family: var(--font-heading);
+      text-transform: uppercase;
     }
 
     .btn-close-how {
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 24px;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: var(--brand-brown);
+      font-size: 20px;
       background: none;
       border: none;
       cursor: pointer;
+      opacity: 0.5;
     }
 
     .how-steps {
       display: flex;
       flex-direction: column;
-      gap: 24px;
     }
 
     .how-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(84, 0, 0, 0.08);
+      /* Subtle divider */
     }
 
-    .step-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: rgba(255, 215, 0, 0.08);
-      border: 1.5px solid rgba(255, 215, 0, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .step-icon svg {
-      width: 24px;
-      height: 24px;
-      stroke: #ffd700;
-      fill: none;
-      stroke-width: 2;
+    .how-step:last-child {
+      border-bottom: none;
     }
 
     .step-title {
-      font-weight: 800;
-      font-size: 16px;
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--brand-brown);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 4px;
     }
 
     .step-desc {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--brand-brown);
       line-height: 1.5;
       font-weight: 500;
+      opacity: 0.85;
+    }
+
+    .step-desc b {
+      color: var(--brand-red);
+      font-weight: 900;
+    }
+
+
+    /* Reusable Status/Error Message Styling */
+    .status-message {
+      color: var(--brand-brown);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+      text-align: center;
+      font-family: var(--font-body);
+      max-width: 220px;
+      margin: 0 auto;
+    }
+
+    .status-message h3 {
+      color: var(--brand-red);
+      font-size: 14px;
+      margin-bottom: 4px;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+    }
+
+    .status-message p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+
+    /* How-to-play footer note */
+    .how-footer-note {
+      text-align: center;
+      color: var(--brand-brown);
+      font-weight: 900;
+      margin-top: 24px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.8;
     }
 
     /* ═══════════════════════════════════════════════════════
        CSS: TROPHY CARD (Off-screen Generation)
        ═══════════════════════════════════════════════════════ */
     #capture-card {
-      position: absolute;
-      top: 0;
-      left: -9999px;
-      width: 1080px;
-      height: 1080px;
-      background: #8B0000; /* Deep red */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      box-sizing: border-box;
-      font-family: var(--font-outfit);
+      position: absolute !important;
+      top: 0 !important;
+      left: -9999px !important;
+      width: 600px !important;
+      height: 600px !important;
+      background: #A10E17 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      font-family: var(--font-body) !important;
     }
 
-    .cap-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 30px; /* Reduced space */
+    .cap-inner-card {
+      width: 552px !important;
+      height: 552px !important;
+      background: #F17660 !important;
+      border-radius: 12px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
 
-    .cap-flippit-logo {
-      width: 400px; /* Scaled down */
-      height: auto;
+    .cap-content-wrapper {
+      position: absolute !important;
+      top: 4px !important;
+      left: 100px !important;
+      width: 352px !important;
+      height: 548px !important;
     }
 
-    .cap-by-line {
-      color: rgba(255,255,255,0.8);
-      font-size: 24px;
-      font-weight: 500;
-      margin: 10px 0;
+    .cap-logo-section {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 352px !important;
+      text-align: center !important;
     }
 
-    .cap-toi-logo {
-      width: 240px; /* Scaled down */
-      filter: brightness(0) invert(1);
+    .cap-logo-img {
+      width: 340px !important;
+      height: auto !important;
+      margin: 0 auto !important;
+      margin-top: -10px !important;
     }
 
-    .cap-main-box {
-      width: 800px;
-      background: var(--brand-salmon);
-      border-radius: 56px;
-      padding: 45px 50px;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 35px;
+    .cap-player-name {
+      position: absolute !important;
+      top: 176px !important;
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      font-size: 32px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      text-transform: uppercase !important;
+      white-space: nowrap !important;
+      letter-spacing: -0.01em !important;
     }
 
-    .cap-top-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .cap-achievement {
+      position: absolute !important;
+      top: 226px !important;
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      font-size: 32px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      text-transform: uppercase !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+      letter-spacing: -0.01em !important;
     }
 
-    .cap-meta-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .cap-stats-group {
+      position: absolute !important;
+      top: 300px !important;
+      left: 46px !important;
+      width: 260px !important;
+      height: 142px !important;
     }
 
-    .cap-username-badge {
-      font-size: 20px;
-      font-weight: 800;
-      color: #540000;
-      opacity: 0.5;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+    .cap-stat-wrapper {
+      position: absolute !important;
+      top: 0 !important;
+      width: 126px !important;
+      height: 132px !important;
     }
 
-    .cap-catchy-title {
-      font-size: 56px;
-      font-weight: 900;
-      color: #540000;
-      margin: 0;
-      letter-spacing: -0.01em;
+    .cap-stat-wrapper.left {
+      left: 0 !important;
     }
 
-    .cap-cal-box {
-      width: 100px;
-      height: 110px;
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    .cap-stat-wrapper.right {
+      left: 134px !important;
     }
 
-    .cap-cal-head {
-      background: #DE3E3E;
-      color: white;
-      font-size: 16px;
-      font-weight: 900;
-      text-align: center;
-      padding: 5px 0;
-      text-transform: uppercase;
+    .cap-icon-wrap {
+      position: absolute !important;
+      top: 0 !important;
+      left: 42px !important;
+      width: 42px !important;
+      height: 48px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 40px !important;
     }
 
-    .cap-cal-body {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
-      font-weight: 900;
-      color: #333;
-      line-height: 1;
+    .cap-stat-box {
+      position: absolute !important;
+      top: 58px !important;
+      left: 0 !important;
+      width: 126px !important;
+      height: 80px !important;
+      background: #540000 !important;
+      color: #FFFFFF !important;
+      overflow: hidden !important;
+      padding: 12px !important;
+      text-align: left !important;
+      box-sizing: border-box !important;
+      border-radius: 0 !important;
     }
 
-    .cap-tiles-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
+    .cap-stat-wrapper.left .cap-stat-box {
+      border-radius: 12px 0 0 12px !important;
     }
 
-    .cap-result-tile {
-      background: #2D0000;
-      border-radius: 28px;
-      padding: 28px 25px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      color: white;
-      position: relative;
+    .cap-stat-wrapper.right .cap-stat-box {
+      border-radius: 0 12px 12px 0 !important;
     }
 
-    .cap-tile-label {
-      font-size: 16px;
-      font-weight: 800;
-      opacity: 0.6;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .cap-label {
+      display: block !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+      margin-bottom: 4px !important;
+      opacity: 0.9 !important;
+      text-align: left !important;
+      color: #FFFFFF !important;
     }
 
-    .cap-tile-value {
-      font-size: 64px;
-      font-weight: 900;
-      line-height: 1;
+    .cap-value {
+      display: block !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      text-align: left !important;
+      color: #FFFFFF !important;
     }
 
-    .cap-tile-suffix {
-      font-size: 20px;
-      opacity: 0.4;
-      margin-left: 4px;
-    }
-
-    .cap-tile-icon {
-      width: 32px;
-      height: 32px;
-      opacity: 0.9;
-      margin-bottom: 8px;
+    .cap-date {
+      position: absolute !important;
+      top: 466px !important;
+      left: 0 !important;
+      width: 352px !important;
+      color: #540000 !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      text-align: center !important;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -959,84 +1128,71 @@
       vertical-align: middle;
     }
 
-    /* TEST MODE INDICATOR */
-    #test-indicator {
+
+
+    #iframe-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 90;
       display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: var(--brand-red);
-      color: white;
-      text-align: center;
-      padding: 4px;
-      font-size: 10px;
-      font-weight: bold;
-      z-index: 9999;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    }
+
+    #iframe-loader.show {
+      display: block;
     }
   </style>
 </head>
 
-<body>
+<body style="background-color: #9d071c;">
   <div id="app-shell">
 
     <!-- ═══════════════════════════════════════════════════════
          HTML: TROPHY CARD (Off-screen for Sharing)
          ═══════════════════════════════════════════════════════ -->
-    <div id="capture-card">
-      <div class="cap-header">
-        <img src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="Flippit" class="cap-flippit-logo">
-        <div class="cap-by-line">by</div>
-        <img src="https://static.toiimg.com/photo/79638883.cms" alt="TOI" class="cap-toi-logo">
-      </div>
+    <div id="capture-card" style="display: none;">
+      <div class="cap-inner-card">
+        <div class="cap-content-wrapper">
+          <div class="cap-logo-section">
+            <img class="cap-logo-img" src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-02.png"
+              alt="TOI Logo">
+          </div>
 
-      <div class="cap-main-box">
-        <div class="cap-top-section">
-          <div class="cap-meta-group">
-            <div class="cap-username-badge"><span id="cc-name-node">PLAYER</span>'S FLIPPED IT CARD</div>
-            <h2 class="cap-catchy-title">HOW ABOUT YOU?</h2>
-          </div>
-          
-          <div class="cap-cal-box">
-            <div class="cap-cal-head" id="cc-cal-m">APR</div>
-            <div class="cap-cal-body" id="cc-cal-d">20</div>
-          </div>
-        </div>
+          <div class="cap-player-name" id="cc-name-node">&nbsp;</div>
+          <div class="cap-achievement">FLIPPED IT TODAY</div>
 
-        <div class="cap-tiles-grid">
-          <div class="cap-result-tile">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-              <svg class="cap-tile-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <div class="cap-tile-label">SOLVED IN</div>
+          <div class="cap-stats-group">
+            <div class="cap-stat-wrapper left">
+              <div class="cap-icon-wrap left">⏱️</div>
+              <div class="cap-stat-box">
+                <div class="cap-label">Solved in</div>
+                <div class="cap-value"><span id="cc-time-node">0</span> secs</div>
+              </div>
             </div>
-            <div class="cap-tile-value"><span id="cc-time">0</span><span class="cap-tile-suffix">s</span></div>
-          </div>
-          <div class="cap-result-tile">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-              <svg class="cap-tile-icon" viewBox="0 0 24 24" fill="#FACC15">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-              <div class="cap-tile-label">SCORE</div>
+
+            <div class="cap-stat-wrapper right">
+              <div class="cap-icon-wrap right">⭐</div>
+              <div class="cap-stat-box">
+                <div class="cap-label">Score</div>
+                <div class="cap-value"><span id="cc-score-node">0</span>/100</div>
+              </div>
             </div>
-            <div class="cap-tile-value"><span id="cc-score">0</span><span class="cap-tile-suffix">/100</span></div>
           </div>
+
+          <div class="cap-date" id="cc-date-node">23/04/2026</div>
         </div>
       </div>
     </div>
 
     <!-- ═══════════ GENERIC HEADER (auth / expired screens) ═══════════ -->
     <div id="generic-header">
-      <img src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Logo">
+      <img src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" alt="TOI Logo">
     </div>
 
     <!-- ═══════════ GAME HEADER ═══════════ -->
     <div id="game-header">
-      <img src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Logo">
+      <img src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" alt="TOI Logo">
       <div id="timer-badge">
         <!-- Timer icon SVG -->
         <svg id="timer-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
@@ -1055,17 +1211,22 @@
       <div class="screen-container" style="justify-content:center;gap:60px;">
         <div style="display:flex;flex-direction:column;align-items:center;width:100%;gap:48px;">
           <div class="logo-wrap fade-in">
-            <img src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Flippit Logo">
+            <img src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" alt="TOI Flippit Logo">
           </div>
-          <div class="tagline fade-in">
+          <div class="tagline fade-in" id="tagline-text">
             FLIP THE WORDS.<br>
             CRACK THE LOGIC.<br>
             BEAT THE CLOCK.
           </div>
         </div>
-        <div class="splash-actions fade-in">
-          <button id="start-btn" class="btn-primary" style="padding:12px 32px;font-size:16px;">LET'S START</button>
+        <div class="splash-actions fade-in" id="splash-actions">
+          <button id="start-btn" class="btn-primary">LET'S START</button>
           <button class="btn-how" id="how-btn">HOW TO PLAY</button>
+          <!-- Temporary Clear Cache button for testing -->
+          <button onclick="localStorage.clear(); sessionStorage.clear(); location.reload();" 
+                  style="margin-top:20px; background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.4); font-size:9px; padding:4px 8px; border-radius:4px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em;">
+            Reset App (Testing Only)
+          </button>
         </div>
       </div>
     </div>
@@ -1077,15 +1238,14 @@
       <div class="screen-container" style="justify-content:center;padding-top:0;">
         <div class="auth-inner fade-in">
           <div class="auth-heading">
+            <p class="auth-sub">Enter Mobile Number</p>
 
-            <p class="auth-sub" style="font-size:18px; margin-bottom: 8px;">ENTER MOBILE NUMBER</p>
-            <p class="auth-note" style="font-size:15px; opacity: 0.8;">First time login only</p>
           </div>
-          <div class="auth-fields" style="align-items:center; gap:20px; margin-top:24px;">
+          <div class="auth-fields">
             <input type="tel" id="mobile-input" class="input-field" placeholder="10-digit number" inputmode="numeric"
               maxlength="10" pattern="[0-9]{10}">
-            <button id="send-otp-btn" class="btn-primary" style="width:240px; padding:12px 20px; font-size:15px;">GET
-              OTP</button>
+            <p class="auth-note">First time login only</p>
+            <button id="send-otp-btn" class="btn-primary">GET OTP</button>
           </div>
         </div>
       </div>
@@ -1099,7 +1259,7 @@
         <div class="auth-inner fade-in">
           <div class="auth-heading">
             <!-- No heading for OTP screen — keep it clean -->
-            <p class="auth-sub" style="font-size:15px;">ENTER OTP</p>
+            <p class="auth-sub">Enter OTP</p>
           </div>
           <div class="auth-fields">
             <div class="mobile-number-display">
@@ -1121,13 +1281,11 @@
             </div>
 
             <div id="resend-countdown"
-              style="font-size:12px; margin-bottom:16px; color:rgba(255,255,255,0.7); text-align:center;">
+              style="font-size:13px; margin-bottom:16px; color:rgba(255,255,255,0.7); text-align:center;">
               Resend OTP in <span id="otp-countdown-sec" style="color:var(--brand-salmon); font-weight:700;">30</span>s
             </div>
 
-            <button id="verify-otp-btn" class="btn-primary"
-              style="width:100%;max-width:260px;align-self:center;padding:11px 20px;font-size:14px;">VERIFY
-            </button>
+            <button id="verify-otp-btn" class="btn-primary">VERIFY</button>
             <button class="btn-resend" id="resend-otp-btn" title="Resend OTP" style="display:none;align-self:center;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <polyline points="1 4 1 10 7 10" />
@@ -1145,12 +1303,13 @@
       <div class="screen-container" style="justify-content:center;padding-top:0;">
         <div class="auth-inner fade-in">
           <div class="auth-heading">
-            <h3>Enter Full Name</h3>
+            <h3>Enter Name</h3>
           </div>
           <div class="auth-fields">
-            <input type="text" id="name-input" class="input-field" placeholder="Your full name">
-            <button id="register-btn" class="btn-primary btn-full">START PLAYING</button>
+            <input type="text" id="name-input" class="input-field" placeholder="Your Name" maxlength="20">
             <p class="register-note">You might just make it to the pages of TOI!</p>
+            <button id="register-btn" class="btn-primary">START PLAYING</button>
+
           </div>
         </div>
       </div>
@@ -1160,62 +1319,63 @@
     <div id="screen-game" class="screen">
       <div class="playing-as-bar">PLAYING AS: <span id="playing-as-name"></span></div>
       <div class="game-iframe-wrap">
-        <div class="game-iframe-card">
-          <iframe id="game-frame" title="Flippit Game" allowfullscreen
+          <div id="iframe-loading-overlay">
+            <div class="spinner"></div>
+            <p style="margin-top:20px; color:white; font-size:14px; opacity:0.8;">Loading puzzle...</p>
+          </div>
+          <iframe id="game-frame" class="game-iframe-card" title="Flippit Game" allowfullscreen
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" scrolling="no"></iframe>
+          
+          <!-- Systematic Diagnostic: HIGH VISIBILITY -->
+          <div id="debug-signal" style="position:absolute; top:10px; left:10px; font-size:14px; color:#FFFF00; background:rgba(0,0,0,0.8); padding:5px 10px; border-radius:4px; pointer-events:none; z-index:999; font-family:monospace; border:1px solid #FFFF00; font-weight:bold;">SIGNAL: WAITING...</div>
         </div>
-      </div>
     </div>
 
     <!-- ═════════════════════ SCREEN - RESULTS ═════════════════════ -->
     <div id="screen-result" class="screen">
       <div class="result-inner fade-in">
-        <img class="result-logo" src="https://bccl.in/wp-content/uploads/2026/03/logo.png" alt="TOI Logo">
-        
-        <div class="result-card">
-          <button class="btn-close-result" onclick="UI.showScreen('splash')">✕</button>
-          <div class="result-msg-top" id="result-msg-top">You nailed it!</div>
 
+        <!-- Logo sits above the card (outside it) -->
+        <img class="result-logo" src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png"
+          alt="TOI Logo">
+
+        <div class="result-card">
+          <!-- Removed close button as per user request -->
+
+
+          <!-- e.g. "You nailed it!" -->
+          <div class="result-msg-top" id="result-msg-top">Mission Accomplished!</div>
+
+          <!-- Stats: icon above each dark tile -->
           <div class="stats-grid">
-            <div class="stat-tile">
-              <div class="stat-icon-up">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
+            <div class="stat-group">
+              <!-- Stopwatch emoji icon above tile -->
+              <div class="stat-icon-up">⏱️</div>
+              <div class="stat-tile">
+                <div class="stat-label-small">Solved in</div>
+                <div class="stat-value-large"><span id="r-time">0</span> secs</div>
               </div>
-              <div class="stat-label-small">Solved in</div>
-              <div class="stat-value-large"><span id="r-time">0</span> secs</div>
             </div>
 
-            <div class="stat-tile">
-              <div class="stat-icon-up">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="#FACC15">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
+            <div class="stat-group">
+              <!-- Star emoji icon above tile -->
+              <div class="stat-icon-up">⭐</div>
+              <div class="stat-tile">
+                <div class="stat-label-small">Your Score</div>
+                <div class="stat-value-large"><span id="r-score">0</span>/100</div>
               </div>
-              <div class="stat-label-small">Your Score</div>
-              <div class="stat-value-large"><span id="r-score">0</span>/100</div>
             </div>
           </div>
 
+          <!-- Bottom message e.g. "Well, played! A fresh flip awaits..." -->
           <div class="result-msg-bottom" id="result-msg-bottom"></div>
 
+          <!-- Share button: white pill with arrow icon -->
           <button class="btn-share" id="share-btn">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 5L20 12L13 19V15C8 15 4.5 16.5 2 20C3 15 6 10 13 9V5Z" />
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M14 9V5L21 12L14 19V14.9C9 14.9 5.5 16.5 3 20C4 15 7 10 14 9Z" />
             </svg>
             SHARE
-          </button>
-        </div>
-
-        <!-- Testing Mode Buttons -->
-        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-          <button id="replay-btn" style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
-            RE-PLAY (TEST MODE)
-          </button>
-          <button id="edit-name-test-btn" style="display:none; background: rgba(0,0,0,0.3); color: white; border: 1px dashed rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; font-size: 12px; cursor: pointer;">
-            EDIT NAME (TEST MODE)
           </button>
         </div>
       </div>
@@ -1225,18 +1385,25 @@
          HTML: SCREEN - EXPIRED
          ═══════════════════════════════════════════════════════ -->
     <div id="screen-expired" class="screen">
-      <div class="screen-container" style="justify-content:center;gap:24px;">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        <div>
-          <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;">TIME'S UP
-          </h2>
-          <p id="expired-message" style="color:rgba(255,255,255,0.75);font-size:14px;line-height:1.6;">This one got
-            away… but there's plenty more to enjoy in today's TOI.</p>
+      <div class="result-inner fade-in">
+
+        <!-- Same logo as result page -->
+        <img class="result-logo" src="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png"
+          alt="TOI Logo">
+
+        <div class="result-card" style="min-height:350px; justify-content:center; padding:36px 28px;">
+          <!-- Removed close button as per user request -->
+
+
+          <!-- v9.0: High-Fidelity "Flipped It" Alarm Clock (100% Design Match) -->
+          <img class="expired-icon" src="https://bccl.in/wp-content/uploads/2026/04/timer.png" alt="Time's Up Timer">
+
+
+          <!-- Final Campaign Copy -->
+          <div id="expired-message" class="status-message">
+            <!-- Random message populated by JS -->
+          </div>
         </div>
-        <button class="btn-primary" id="expired-home-btn" style="margin-top:8px;">BACK HOME</button>
       </div>
     </div>
 
@@ -1245,71 +1412,40 @@
          ═══════════════════════════════════════════════════════ -->
     <div id="how-overlay">
       <div class="how-panel">
-        <div class="how-header">
-          <h2>HOW TO PLAY</h2>
-          <button class="btn-close-how" id="close-how-btn">✕</button>
+        <button class="btn-close-how" id="close-how-btn">✕</button>
+        <div class="how-header" style="margin-bottom: 20px; text-align: left;">
+          <h1 class="how-header-title">How to Play</h1>
         </div>
         <div class="how-steps">
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </div>
-            <div>
-              <div class="step-title">Read the board</div>
-              <div class="step-desc">Look at the scrambled flip-board letter tiles.</div>
-            </div>
+            <div class="step-desc"><b>The Goal:</b> You’ve got 60 seconds to flip two words into a famous phrase using
+              opposites or synonyms. For example, turn “Slow + Meal” into “Fast Food.”</div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-            </div>
-            <div>
-              <div class="step-title">Guess the word</div>
-              <div class="step-desc">Figure out the hidden word or phrase.</div>
-            </div>
+            <div class="step-desc"><b>How to Play:</b> Scan the daily QR code in the Times of India newspaper to unlock
+              a new game daily. You get one shot per day!</div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <div>
-              <div class="step-title">Beat the clock</div>
-              <div class="step-desc">You have 60 seconds — every second counts!</div>
-            </div>
+            <div class="step-desc"><b>Hints:</b> If you’re stuck, use “Reveal a Letter,” but remember this will slightly
+              lower your score.</div>
           </div>
           <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            </div>
-            <div>
-              <div class="step-title">Flip it!</div>
-              <div class="step-desc">Select the correct letters in order to score.</div>
-            </div>
+            <div class="step-desc"><b>Win Big:</b> Score high enough and your name could be featured in the newspaper
+              and weekly prizes*</div>
           </div>
+          <div class="how-footer-note">Happy playing!</div>
         </div>
-        <button class="btn-primary" id="how-start-btn"
-          style="margin-top:48px;width:100%;padding:16px;font-size:18px;">LET'S START</button>
       </div>
     </div>
+
+
+
+
 
     <!-- ═══════════ LOADING OVERLAY ═══════════ -->
     <div id="loading-overlay">
       <div class="spinner"></div>
     </div>
-    <div id="test-indicator">TEST MODE ACTIVATED — REPEAT PLAYS ENABLED</div>
 
   </div><!-- #app-shell -->
 
@@ -1317,6 +1453,20 @@
     /* ═══════════════════════════════════════════════════════
        FLIPPIT ENGINE: CORE LOGIC & API
        ═══════════════════════════════════════════════════════ */
+    // ── PRODUCTION CONSOLE SILENCER ──────────────────────────
+    // Disables logging unless ?test=true is present
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const isTest = params.get('test') || params.get('t');
+      if (!isTest) {
+        const noop = () => { };
+        console.log = noop;
+        console.info = noop;
+        console.debug = noop;
+        console.clear();
+      }
+    })();
+
 
     // ─────────────────────────────────────────────────────────
     // 1. CONFIGURATION & CONSTANTS
@@ -1326,7 +1476,8 @@
       PUZZLE_BASE: 'https://cdn-in.amuselabs.com/nexus/date-picker?idx=1&set=nexus-toi-synant-puzzles&embed=1',
       SESSION_KEY: 'flippit_v2_session',
       OFFLINE_QUEUE_KEY: 'flippit_offline_queue',
-      LOGO_URL: 'https://bccl.in/wp-content/uploads/2026/03/logo.png',
+      TIMER_STATE_KEY: 'flippedit_timer_v2',
+      LOGO_URL: 'https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png',
       GAME_ID_VAL: 30, // Internal game ID for backend
       MAX_TIME: 60
     };
@@ -1341,13 +1492,19 @@
       score: null,
       timeLeft: CONFIG.MAX_TIME,
       timer: null,
+      timerPersistInterval: null,
       isComplete: false,
       gameId: '',       // Set dynamically
       isSharing: false,
       shareBlob: null,   // Cache for the generated card
       city: 'TOIIN',     // Captured from URL ?city=...
       qrDate: null,      // Captured from URL ?date=YYYYMMDD
-      isTestMode: false  // Persists even after URL is cleaned
+      isGameWarm: false,
+      isLaunching: false,
+      isPuzzleReady: false,      // Track if AmuseLabs LOAD actually fired
+      isRedirected: false,       // Track if we redirected away during checkDailyLock
+      iframeTimeoutHandle: null, // Timer handle for the 15s warning
+      fallbackTimerHandle: null  // Timer handle for the 3s READY fallback
     };
 
     // ─────────────────────────────────────────────────────────
@@ -1384,8 +1541,18 @@
         return res.json();
       },
 
+      /** Helper to resolve correct user_id (preferring UUID/hash_id) */
+      getPersistentUserId() {
+        // Returns the UUID/hash_id as a string. 
+        // This is crucial because index (9).html confirms the backend accepts the raw UUID string.
+        return String(State.session?.hash_id || State.session?.id || '');
+      },
+
       /** Save game result to backend */
       async saveGame(data, token) {
+        // Log payload for debugging
+        console.log('[API] Saving game...', { ...data, g_id: data.g_id });
+
         await OfflineManager.flush();
         try {
           const res = await fetch(`${CONFIG.API_BASE}/save-game`, {
@@ -1393,8 +1560,16 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(data)
           });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
+
+          if (!res.ok) {
+            const errorBody = await res.text();
+            console.error(`[API] Save failed (HTTP ${res.status}):`, errorBody);
+            throw new Error(`HTTP ${res.status}: ${errorBody}`);
+          }
+
+          const result = await res.json();
+          console.log('[API] Save successful:', result);
+          return result;
         } catch (err) {
           console.error('[API] Save failed, queuing...', err);
           OfflineManager.enqueue(data, token);
@@ -1432,15 +1607,29 @@
       async flush() {
         const q = this.getQueue();
         if (!q.length) return;
+        const currentToken = State.session?.token;
         const remaining = [];
         for (const item of q) {
           try {
+            // Use current token if the item's token is potentially stale
+            const tokenToUse = item.token || currentToken;
             const res = await fetch(`${CONFIG.API_BASE}/save-game`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${item.token}` },
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenToUse}` },
               body: JSON.stringify(item.data)
             });
-            if (!res.ok) throw new Error();
+
+            // If unauthorized and we have a newer token, try once with the current one
+            if (res.status === 401 && currentToken && currentToken !== item.token) {
+              const retryRes = await fetch(`${CONFIG.API_BASE}/save-game`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                body: JSON.stringify(item.data)
+              });
+              if (!retryRes.ok) throw new Error();
+            } else if (!res.ok) {
+              throw new Error();
+            }
           } catch { remaining.push(item); }
         }
         if (remaining.length) localStorage.setItem(CONFIG.OFFLINE_QUEUE_KEY, JSON.stringify(remaining));
@@ -1526,17 +1715,16 @@
     // 5. GENERAL UTILITIES
     // ─────────────────────────────────────────────────────────
     const Utils = {
-      /** Generates a unique daily ID based on IST date */
-      getTodayId() {
-        const now = new Date();
-        const ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
-        return 'flippit_' + ist.toISOString().split('T')[0].replace(/-/g, '');
-      },
-
       /** Converts UTC/String date to IST date string for comparison */
       getISTDateString(isoString) {
         const date = isoString ? new Date(isoString) : new Date();
         return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+      },
+
+      /** Generates a unique daily ID based on IST date */
+      getTodayId() {
+        // Returns YYYYMMDD (8 chars) to ensure compatibility with backend column limits
+        return this.getISTDateString().replace(/-/g, '');
       },
 
       /** Maps score to rank label */
@@ -1566,47 +1754,12 @@
         }
       },
 
-      /** Parse URL parameters, validate expiry, and HIDE params from address bar */
+      /** Standalone Test Bypass: Always allow entry */
       initQueryParams() {
-        const params = new URLSearchParams(window.location.search);
-        let isValid = true;
-
-        // 1. Detect Test Mode FIRST (before date check so it can bypass)
-        if (params.get('test')) {
-          State.isTestMode = true;
-          document.getElementById('test-indicator').style.display = 'block';
-        }
-
-        // 2. Capture City (supports 'city' or 'c' short param for smaller QR)
-        const cityParam = params.get('city') || params.get('c');
-        if (cityParam) State.city = cityParam.toUpperCase();
-
-        // 3. Capture and Validate Date
-        // Supports both YYYYMMDD (e.g. 20260420) and YYYY-MM-DD (e.g. 2026-04-20)
-        const dateParam = params.get('date') || params.get('d');
-        if (dateParam) {
-          // Normalize: "20260420" → "2026-04-20"
-          let normalizedDate = dateParam;
-          if (/^\d{8}$/.test(dateParam)) {
-            normalizedDate = `${dateParam.slice(0, 4)}-${dateParam.slice(4, 6)}-${dateParam.slice(6, 8)}`;
-          }
-          State.qrDate = normalizedDate;
-          const todayIST = this.getISTDateString();
-          if (normalizedDate !== todayIST && !State.isTestMode) {
-            console.warn('[Validation] Expired QR scanned:', dateParam, '→', normalizedDate, '(today:', todayIST + ')');
-            isValid = false;
-          }
-        }
-
-        // 4. CLEAN URL (Native-app-like experience — hide params from address bar)
-        // Keep 'test' parameter if present so refreshes don't break Test Mode
-        if (window.history.replaceState && (params.toString().length > 0)) {
-          const testVal = params.get('test');
-          const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + (testVal ? '?test=true' : '');
-          window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-        }
-
-        return isValid;
+        console.log('[TestViewer] Parameter Validation Bypassed.');
+        State.city = 'TEST_CITY';
+        State.qrDate = this.getISTDateString();
+        return true;
       }
     };
 
@@ -1614,93 +1767,62 @@
     // 6. GAME ENGINE (Core Lifecycle)
     // ─────────────────────────────────────────────────────────
     const GameEngine = {
-      /** Checks if user has already played today and locks them out if so */
+      /** Standalone Test Bypass: Always allow play */
       async checkDailyLock(userId, token, onLocked, onAvailable) {
-        const todayIST = Utils.getISTDateString();
-        let stats;
-        try {
-          stats = await FlippitAPI.getUserStats(userId, token);
-        } catch (err) {
-          if (err.message === 'Unauthorized') {
-            localStorage.removeItem(CONFIG.SESSION_KEY);
-            window.location.reload();
-            return;
-          }
-          // Network failure — fail-open (let them play, avoid locking out) 
-          console.warn('[DailyLock] API error, allowing play:', err);
-          onAvailable();
-          return;
-        }
-
-        const logs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
-        console.log('[DailyLock] logs found:', logs.length, '| todayIST:', todayIST);
-
-        // Check for any completed or expired log today
-        let todayLog = logs.find(log => {
-          const logDate = Utils.getISTDateString(log.created_at);
-          const status = (log.status || '').toLowerCase();
-          const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
-          console.log('[DailyLock] log:', log.status, '| date:', logDate, '| isFinal:', isFinal, '| match:', isFinal && logDate === todayIST);
-          return isFinal && logDate === todayIST;
-        });
-
-        // If no final log, check for a pending log that has timed out (>60 seconds old)
-        if (!todayLog) {
-          const pendingLog = logs.find(log => {
-            const logDate = Utils.getISTDateString(log.created_at);
-            return (log.status || '').toLowerCase() === 'pending' && logDate === todayIST;
-          });
-          if (pendingLog) {
-            const ageMs = Date.now() - new Date(pendingLog.created_at).getTime();
-            if (ageMs > 60000) {
-              todayLog = { ...pendingLog, status: 'expired' };
-              console.log('[DailyLock] Pending game timed out, treating as expired');
-            }
-          }
-        }
-
-        console.log('[DailyLock] todayLog:', todayLog);
-        if (todayLog) {
-          onLocked(todayLog, stats);
-        } else {
-          onAvailable();
-        }
+        console.log('[TestViewer] Daily Lock Bypassed.');
+        onAvailable();
       },
 
       /** Calculates score based on performance */
-      calculateResults(rawTime, apiLogs) {
+      calculateResults(rawTime, apiLogs, rawScore = 0) {
         const timeSpent = Math.min(60, Math.max(1, Math.round(rawTime)));
-        const score = Math.min(100, Math.max(1, 100 - timeSpent));
-        // Win rate = % of completed games among all final-status games
-        const allFinal = (apiLogs || []).filter(l => ['completed', 'success', 'expired', 'failure'].includes((l.status || '').toLowerCase()));
-        const allWins = allFinal.filter(l => ['completed', 'success'].includes((l.status || '').toLowerCase()));
-        const winRate = allFinal.length > 0 ? Math.round((allWins.length / allFinal.length) * 100) : 100;
-        // Total flips = total number of games played (all statuses), min 1
-        const totalFlips = Math.max(1, (apiLogs || []).length);
 
-        // ── Business-approved top messages (by time taken) ──
-        let msgTop = 'MISSION ACCOMPLISHED!';
-        if (timeSpent <= 20) msgTop = 'FASTEST FINGERS IN TOWN!';
-        else if (timeSpent <= 35) msgTop = "YOU'RE ON FIRE!";
-        else if (timeSpent <= 50) msgTop = 'YOU CRUSHED IT!';
+        // --- Restore Legacy Scoring Formula ---
+        // Formula: (59 - time) + Math.min(40, score)
+        let scoreVal = 0;
+        if (timeSpent <= 60) {
+          const baseScore = Math.min(40, Number(rawScore) || 0);
+          const timeBonus = Math.max(0, 59 - timeSpent);
+          scoreVal = timeBonus + baseScore;
+        }
+        // Ensure even a slow win gets at least some points if they completed it
+        if (scoreVal <= 0 && timeSpent <= 60) scoreVal = Math.min(40, Number(rawScore) || 1);
 
-        // ── Business-approved bottom messages (random pick) ──
+        // --- Time-Tiered Top Messages (7 bands) ---
+        let msgTopOptions;
+        if (timeSpent < 10) {
+          msgTopOptions = ["Fastest fingers in town.", "Blink and you're done.", "Quick Thinking. Quicker Finish."];
+        } else if (timeSpent < 15) {
+          msgTopOptions = ["You\u2019re on fire.", "Rapid\u2014and razor sharp."];
+        } else if (timeSpent < 20) {
+          msgTopOptions = ["You crushed it.", "That came together fast."];
+        } else if (timeSpent < 25) {
+          msgTopOptions = ["Mission accomplished.", "Clean play. Nicely done."];
+        } else if (timeSpent < 30) {
+          msgTopOptions = ["You nailed it.", "Smart finish right there."];
+        } else if (timeSpent < 45) {
+          msgTopOptions = ["Thought it through\u2014and flipped it right.", "Nice solve. Took the scenic route."];
+        } else {
+          msgTopOptions = ["Just in time\u2014but right on.", "Made the clock work for you."];
+        }
+        const msgTop = msgTopOptions[Math.floor(Math.random() * msgTopOptions.length)];
+
+        // --- Bottom Messages Pool (6 options) ---
         const msgArray = [
-          "A new one arrives tomorrow. For now, enjoy the rest of today's newspaper.",
-          "Another fresh challenge awaits tomorrow. Until then, keep reading today's TOI.",
-          "Check back tomorrow for a new flip. For now, carry on with today's reading.",
-          "Tomorrow brings a new logical twist! Meanwhile, dive into today's TOI."
+          "Alright, show off. Great flip. Another lands tomorrow, till then, enjoy today’s TOI.",
+          "Clearly not your first flip. Nice work. New challenge tomorrow, till then, continue reading TOI.",
+          "Too easy, huh? Smooth finish. Another puzzle tomorrow. Meanwhile, dive into today’s TOI.",
+          "We get it, you’re good. Aced it. Back tomorrow. Till then, carry on with today’s Times of India.",
+          "Mission accomplished. Again. Flip mastered. New one tomorrow, for now, enjoy today’s TOI."
         ];
         const msgBottom = msgArray[Math.floor(Math.random() * msgArray.length)];
 
         return {
-          score,
+          score: scoreVal,
           timeTaken: timeSpent,
-          streak: 1, // Default, will be updated by stats
+          streak: 1, // Updated by stats
           bestStreak: 1,
-          winRate,
-          totalFlips,
-          rank: Utils.getRank(score),
+          rank: Utils.getRank(scoreVal),
           msgTop,
           msgBottom
         };
@@ -1709,14 +1831,41 @@
       /** Returns a random expire message (business-approved) */
       getExpireMessage() {
         const msgArrayExpire = [
-          "Oops! This flip flopped. Try again tomorrow. Now go catch up on the rest of today's TOI.",
-          "This flip slipped away… but the rest of today's TOI is waiting for you.",
-          "The puzzle dodged you today—turn the page and keep reading the TOI.",
-          "This one got away… but there's plenty more to enjoy in today's TOI.",
-          "Your brain fought bravely; the puzzle fought harder. Time to dive back into today's TOI.",
-          "This one slipped away… but tomorrow is another flip. Go on, continue reading your newspaper."
+          "Happens to the best. This flip flopped. Try again tomorrow, catch up on today’s TOI.",
+          "So close, but no flip today. It slipped away. Catch up on today’s TOI.",
+          "The puzzle played hard to get today. Turn the page and keep reading the Times of India.",
+          "Not your flip, still a good day. This one got away. Today’s TOI has more.",
+          "Good fight. Smarter puzzle. Try again tomorrow, catch up on today’s TOI."
         ];
         return msgArrayExpire[Math.floor(Math.random() * msgArrayExpire.length)];
+      },
+
+      /** Triggered when time runs out — shows expired screen */
+      async onExpire() {
+        if (State.isComplete) return;
+        State.isComplete = true;
+        this.stopTimer();
+
+        // Set random expiry message
+        const msgEl = document.getElementById('expired-message');
+        if (msgEl) msgEl.textContent = this.getExpireMessage();
+
+        // Save expired status to backend
+        if (State.session && State.session.token) {
+          const payload = {
+            g_id: State.gameId || Utils.getTodayId(),
+            user_id: FlippitAPI.getPersistentUserId(),
+            time_taken: CONFIG.MAX_TIME,
+            score: 0,
+            status: 'expired',
+            city: State.city
+          };
+          FlippitAPI.saveGame(payload, State.session.token);
+          // Clear persisted timer on finish
+          localStorage.removeItem(CONFIG.TIMER_STATE_KEY);
+        }
+
+        UI.showScreen('expired');
       },
 
       /** Triggered when puzzle iframe signals completion */
@@ -1724,10 +1873,6 @@
         if (State.isComplete) return;
         State.isComplete = true;
         this.stopTimer();
-
-        if (typeof confetti !== 'undefined') {
-          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
 
         const rawTime = (data.timeTaken && data.timeTaken > 0) ? data.timeTaken : (CONFIG.MAX_TIME - State.timeLeft);
 
@@ -1742,22 +1887,24 @@
           } catch (e) { console.warn('[onComplete] Could not fetch stats:', e); }
         }
 
-        const results = this.calculateResults(rawTime, apiLogs);
+        const results = this.calculateResults(rawTime, apiLogs, data.score || 0);
         results.streak = apiStreak;
         results.bestStreak = Number(results.bestStreak) || apiStreak;
         State.score = results;
 
-        // Save to backend (use dynamic g_id from PUZZLE_LOAD event, fallback to config)
+        // Save to backend (use canonical date ID)
         if (State.session && State.session.token) {
           const payload = {
-            g_id: State.gameId || CONFIG.GAME_ID_VAL,
-            user_id: Number(State.session.id),
-            time_taken: results.timeTaken,
-            score: results.score,
+            g_id: State.gameId || Utils.getTodayId(),
+            user_id: FlippitAPI.getPersistentUserId(),
+            time_taken: Number(results.timeTaken) || 60,
+            score: Number(results.score) || 0,
             status: 'completed',
-            city: State.city
+            city: String(State.city || 'DEFAULT')
           };
           FlippitAPI.saveGame(payload, State.session.token);
+          // Clear persisted timer on finish
+          localStorage.removeItem(CONFIG.TIMER_STATE_KEY);
         }
 
         setTimeout(() => UI.showResults(results), 500);
@@ -1765,22 +1912,39 @@
 
       /** Timer controllers */
       startTimer() {
+        // Prevent double-starting or resetting if timer is already active
+        if (State.timer) return;
+
         State.isComplete = false;
         this.stopTimer();
-        State.timeLeft = CONFIG.MAX_TIME;
-        UI.updateTimer(CONFIG.MAX_TIME);
 
+        // 1. Initial UI update
+        UI.updateTimer(State.timeLeft);
+
+        // 2. Start the ticking interval
         State.timer = setInterval(() => {
           State.timeLeft--;
           UI.updateTimer(State.timeLeft);
           if (State.timeLeft <= 0) {
             this.stopTimer();
-            this.onComplete({ score: 0, timeTaken: CONFIG.MAX_TIME });
+            this.onExpire();
           }
         }, 1000);
+
+        // 3. Periodically persist the timer state
+        State.timerPersistInterval = setInterval(() => {
+          if (!State.isComplete && State.timeLeft > 0) {
+            localStorage.setItem(CONFIG.TIMER_STATE_KEY, JSON.stringify({
+              timeLeft: State.timeLeft,
+              dayId: Utils.getTodayId(),
+              ts: Date.now()
+            }));
+          }
+        }, 2000);
       },
       stopTimer() {
         if (State.timer) { clearInterval(State.timer); State.timer = null; }
+        if (State.timerPersistInterval) { clearInterval(State.timerPersistInterval); State.timerPersistInterval = null; }
       }
     };
 
@@ -1800,12 +1964,21 @@
         const gameHeader = document.getElementById('game-header');
 
         const isGame = name === 'game';
-        const isAuth = ['login', 'otp', 'register', 'expired'].includes(name);
+        const isAuth = ['login', 'otp', 'register'].includes(name);
 
         gameHeader.style.display = isGame ? 'flex' : 'none';
         genericHeader.style.display = isAuth ? 'flex' : 'none';
 
         State.currentScreen = name;
+
+        // Immediate population for Expired screen to prevent lag, but respect existing 'Access Denied'
+        if (name === 'expired') {
+          const msgEl = document.getElementById('expired-message');
+          // Only set the random expire message if the element is empty or contains the default placeholder
+          if (msgEl && (!msgEl.innerHTML || msgEl.innerHTML.includes('...'))) {
+            msgEl.textContent = GameEngine.getExpireMessage();
+          }
+        }
       },
 
       /** Show/hide loading spinner */
@@ -1835,13 +2008,16 @@
 
         // Update Share Card
         const ccName = document.getElementById('cc-name-node');
-        if (ccName) ccName.textContent = name.toUpperCase();
+        if (ccName) {
+          ccName.textContent = name.toUpperCase();
+        }
 
-        const ccMonth = document.getElementById('cc-cal-m');
-        if (ccMonth) ccMonth.textContent = monthsS[now.getMonth()];
-
-        const ccDay = document.getElementById('cc-cal-d');
-        if (ccDay) ccDay.textContent = day;
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yyyy = now.getFullYear();
+        const dateFull = `${dd}/${mm}/${yyyy}`;
+        const ccDate = document.getElementById('cc-date-node');
+        if (ccDate) ccDate.textContent = dateFull;
 
         document.getElementById('result-msg-top').textContent = data.msgTop;
         document.getElementById('result-msg-bottom').textContent = data.msgBottom;
@@ -1849,7 +2025,7 @@
         // Stats grid
         const maps = {
           'r-time': data.timeTaken, 'r-score': data.score,
-          'cc-time': data.timeTaken, 'cc-score': data.score
+          'cc-time-node': data.timeTaken, 'cc-score-node': data.score
         };
         Object.keys(maps).forEach(id => {
           const el = document.getElementById(id);
@@ -1858,13 +2034,12 @@
 
         this.showScreen('result');
 
-        // Show test-mode buttons
-        const replayBtn = document.getElementById('replay-btn');
-        const editNameBtn = document.getElementById('edit-name-test-btn');
-        if (replayBtn) replayBtn.style.display = State.isTestMode ? 'flex' : 'none';
-        if (editNameBtn) editNameBtn.style.display = State.isTestMode ? 'flex' : 'none';
-
         ShareManager.prepare();
+      },
+
+      /** Toggle How-to-play overlay */
+      toggleHow(show) {
+        document.getElementById('how-overlay').classList.toggle('open', show);
       }
     };
 
@@ -1931,8 +2106,7 @@
             await navigator.share({
               files: [file],
               title: 'TOI Flippit',
-              text: `I’d tell you how easy today’s puzzle was, but I don’t want to hurt your feelings. 🤫
-If you think you can even come close to my scorecard, pick up the Times of India and try Flipped It.`
+              text: `That’s my flip. Let’s see yours, pick up the Times of India and play Flipped It.`
             });
           } else {
             download();
@@ -1961,43 +2135,142 @@ If you think you can even come close to my scorecard, pick up the Times of India
           } catch { data = { raw: event.data }; }
           if (!data) return;
 
-          const type = String(data.type || data.event || data.data?.type || '').toUpperCase();
+          const type = String(data.type || data.event || data.data?.type || data.data?.event || '').toUpperCase();
           const progress = String(data.progress || data.data?.progress || '').toUpperCase();
 
+          // Update Visual Diagnostic (HIGH VISIBILITY)
+          const debugEl = document.getElementById('debug-signal');
+          if (debugEl) {
+            debugEl.innerText = `SIGNAL: ${type || 'UNKNOWN'}`;
+            debugEl.style.display = 'block';
+            console.log('[GameBridge] RECEIVED:', type, data);
+          }
+
+          // CATCH-ALL: If we get ANY signal while on the game screen and timer hasn't started,
+          // start it after a small buffer, UNLESS it's just the initial LOAD.
+          if (State.currentScreen === 'game' && !State.timer) {
+             // If we see activity that isn't just the first LOAD, start the clock.
+             if (type && !type.includes('LOAD')) {
+                console.log('[GameBridge] Catch-all starting timer on:', type);
+                GameEngine.startTimer();
+             }
+          }
+
+          // 1. PHASE 1: Initial Load (Files are downloaded)
           if (type.includes('LOAD')) {
-            // Capture the real puzzle ID from the iframe for save-game calls
-            const puzzleId = data.id || data.puzzleId;
-            if (puzzleId) State.gameId = String(puzzleId);
-            GameEngine.startTimer();
+            if (State.isRedirected) return;
+            
+            // Clear timeout warning
+            if (State.iframeTimeoutHandle) {
+              clearTimeout(State.iframeTimeoutHandle);
+              State.iframeTimeoutHandle = null;
+            }
+
+            State.isGameWarm = true;
+            if (data.id) State.gameId = data.id;
+
+            // TRACKING: Record that the game has started (pending)
+            if (State.gameId && State.session && State.session.token) {
+              const payload = {
+                g_id: State.gameId,
+                user_id: FlippitAPI.getPersistentUserId(),
+                status: 'pending',
+                city: State.city
+              };
+              FlippitAPI.saveGame(payload, State.session.token);
+            }
+
+            const overlay = document.getElementById('iframe-loading-overlay');
+            if (overlay) overlay.classList.add('hidden');
+            UI.setLoading(false);
+
+            // Show screen immediately so user isn't stuck on splash
+            if (State.isLaunching || State.currentScreen === 'game') {
+              State.isLaunching = false;
+              UI.showScreen('game');
+              
+              // FALLBACK: If we don't get a "READY" signal in 3 seconds, 
+              // start the timer anyway as a safety measure.
+              if (!State.timer) {
+                State.fallbackTimerHandle = setTimeout(() => {
+                  if (!State.timer && State.currentScreen === 'game') {
+                    console.log('[GameBridge] No READY signal received, starting timer via LOAD fallback.');
+                    GameEngine.startTimer();
+                  }
+                }, 3000);
+              }
+            }
+          }
+
+          // 2. PHASE 2: Puzzle Ready (Game is visible and playable)
+          if (type.includes('READY') || type.includes('START')) {
+            State.isPuzzleReady = true;
+            if (data.id) State.gameId = data.id;
+
+            // Clear the fallback timer since we got a real signal
+            if (State.fallbackTimerHandle) {
+              clearTimeout(State.fallbackTimerHandle);
+              State.fallbackTimerHandle = null;
+            }
+
+            if (State.currentScreen === 'game' && !State.timer) {
+              // This is the "True" start point
+              State.timeLeft = CONFIG.MAX_TIME;
+              GameEngine.startTimer();
+            }
           }
 
           if ((isMatch(type) || isMatch(progress)) && !State.isComplete) {
+            const accuracyScore = Number(data.points || data.score || data.accuracy || 0);
             GameEngine.onComplete({
-              timeTaken: Number(data.timeTaken || data.duration || 0)
+              timeTaken: Number(data.timeTaken || data.duration || 0),
+              score: accuracyScore
             });
           }
 
           if (type.includes('EXPIRE') && !State.isComplete) {
-            // In Test Mode, we ignore iframe-driven expiration to allow re-testing
-            if (!State.isTestMode) {
-              State.isComplete = true;
-              GameEngine.stopTimer();
-              document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-              UI.showScreen('expired');
-            } else {
-              console.log('[TestMode] Iframe sent EXPIRE — ignoring redirect.');
-            }
+            GameEngine.onExpire();
           }
         });
       },
 
-      /** Load puzzle in iframe */
-      launch() {
-        const uid = State.session?.id || 'anonymous';
+      /** Helper to move away safely (prevents race condition in LOAD) */
+      redirectAway(screenName, msgFn) {
+        State.isRedirected = true;
+        State.isLaunching = false;
+        if (msgFn) msgFn();
+        UI.showScreen(screenName);
+        UI.setLoading(false);
+      },
+
+      /** Load puzzle in background without showing screen */
+      warmUp() {
+        if (State.isGameWarm) return;
+        let uid = State.session?.id || 'anonymous';
         const url = `${CONFIG.PUZZLE_BASE}&uid=${uid}`;
         document.getElementById('game-frame').src = url;
-        document.getElementById('playing-as-name').textContent = (State.userName || 'PLAYER').toUpperCase();
-        UI.showScreen('game');
+      },
+
+      /** Reveal the warmed-up game or load fresh if needed */
+      launch() {
+        if (State.isGameWarm && State.isPuzzleReady) {
+          // Already fully loaded — show immediately
+          UI.showScreen('game');
+          // We NO LONGER start the timer here. 
+          // We wait for the iframe to send a signal while we are in the 'game' screen.
+        } else {
+          // Still loading — show overlay and wait for LOAD event
+          UI.setLoading(true);
+          State.isLaunching = true;
+          this.warmUp();
+
+          // Safety timeout for loading warning
+          if (State.iframeTimeoutHandle) clearTimeout(State.iframeTimeoutHandle);
+          State.iframeTimeoutHandle = setTimeout(() => {
+            const msg = document.getElementById('iframe-timeout-msg');
+            if (msg) msg.style.display = 'block';
+          }, 15000);
+        }
       }
     };
 
@@ -2006,62 +2279,45 @@ If you think you can even come close to my scorecard, pick up the Times of India
     // ─────────────────────────────────────────────────────────
 
     // --- Start / Splash ---
-    document.getElementById('start-btn').addEventListener('click', async () => {
+    document.getElementById('start-btn').addEventListener('click', () => {
       const saved = Utils.session.load();
       if (!saved) { UI.showScreen('login'); return; }
 
       State.session = saved;
-      UI.setLoading(true);
-      try {
-        await GameEngine.checkDailyLock(saved.id, saved.token,
-          (log, stats) => {
-            State.userName = saved.name || 'Player';
-            const status = (log.status || '').toLowerCase();
-            const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
-            const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+      State.userName = saved.name || 'Player';
 
-            if (isFinal && !State.isTestMode) {
-              if (status === 'expired' || status === 'failure') {
-                document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-                UI.showScreen('expired');
-              } else {
-                const rawTime = Number(log.time_taken) || 60;
-                UI.showResults({
-                  ...GameEngine.calculateResults(rawTime, allLogs),
-                  streak: Number(stats.streak) || 1,
-                  bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
-                });
-              }
-            } else if (isFinal && State.isTestMode) {
-              const rawTime = Number(log.time_taken) || 60;
+      // 1. Optimistic Launch: Start the game immediately
+      console.log('[StartBtn] Optimistic launch triggered...');
+      GameBridge.launch();
+
+      // --- Standalone Test Bypass: Always allow play in Test Viewer ---
+      console.log('[TestViewer] Bypassing Daily Lock for testing...');
+      () => console.log('[StartBtn] Permission confirmed.')
+      /* 
+      GameEngine.checkDailyLock(saved.id, saved.token,
+        (log, stats) => {
+          GameBridge.redirectAway(log.status === 'expired' ? 'expired' : 'result', () => {
+            if (log.status !== 'expired') {
+              const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
               UI.showResults({
-                ...GameEngine.calculateResults(rawTime, allLogs),
+                ...GameEngine.calculateResults(log.time_taken, allLogs, log.score || 0),
                 streak: Number(stats.streak) || 1,
                 bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
               });
-            } else {
-              State.userName = saved.name || 'Player';
-              GameBridge.launch();
             }
-          },
-          () => {
-            State.userName = saved.name || 'Player';
-            GameBridge.launch();
-          }
-        );
-      } catch (err) {
-        console.error('[StartBtn] Error during daily lock check:', err);
-        UI.showScreen('login');
-      } finally { UI.setLoading(false); }
+          });
+        },
+        () => console.log('[StartBtn] Permission confirmed.')
+      ).catch(err => console.warn('[StartBtn] Background check failed:', err));
+      */
     });
 
     // --- How to Play ---
-    document.getElementById('how-btn').onclick = () => document.getElementById('how-overlay').classList.add('open');
-    document.getElementById('close-how-btn').onclick = () => document.getElementById('how-overlay').classList.remove('open');
-    document.getElementById('how-start-btn').onclick = () => {
-      document.getElementById('how-overlay').classList.remove('open');
-      document.getElementById('start-btn').click();
-    };
+    const howBtn = document.getElementById('how-btn');
+    if (howBtn) howBtn.onclick = () => document.getElementById('how-overlay').classList.add('open');
+
+    const closeHowBtn = document.getElementById('close-how-btn');
+    if (closeHowBtn) closeHowBtn.onclick = () => document.getElementById('how-overlay').classList.remove('open');
 
     // --- Auth Flow ---
     document.getElementById('send-otp-btn').onclick = async () => {
@@ -2090,42 +2346,39 @@ If you think you can even come close to my scorecard, pick up the Times of India
         const res = await FlippitAPI.verifyOtp(p, o);
         if (!res.UserId) throw new Error(res.error || 'Invalid OTP');
 
-        const session = { id: res.UserId, name: res.UserName || '', token: res.token };
+        const session = {
+          id: res.UserId,
+          hash_id: res.HashId || res.hash_id, // Capture UUID if backend provides it
+          name: res.UserName || '',
+          token: res.token
+        };
         Utils.session.save(session);
 
-        await GameEngine.checkDailyLock(session.id, session.token,
-          (log, stats) => {
-            State.userName = res.UserName;
-            const status = (log.status || '').toLowerCase();
-            const isFinal = ['completed', 'success', 'expired', 'failure'].includes(status);
+        // 1. Optimistic Launch after Login
+        if (!res.UserName || res.UserName === 'Test') {
+          if (res.UserName) State.userName = res.UserName;
+          UI.showScreen('register');
+        } else {
+          State.userName = res.UserName;
+          GameBridge.launch();
+        }
 
-            if (isFinal && !State.isTestMode) {
-              // Forced lock-out in production
-              if (status === 'expired' || status === 'failure') {
-                document.getElementById('expired-message').textContent = GameEngine.getExpireMessage();
-                UI.showScreen('expired');
-              } else {
-                UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60) });
+        // 2. Background Lock Check
+        GameEngine.checkDailyLock(session.id, session.token,
+          (log, stats) => {
+            GameBridge.redirectAway(log.status === 'expired' ? 'expired' : 'result', () => {
+              if (log.status !== 'expired') {
+                const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+                UI.showResults({
+                  ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
+                  streak: Number(stats.streak) || 1,
+                  bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
+                });
               }
-            } else if (isFinal && State.isTestMode) {
-              // In Test Mode, show results but allow re-play via the new button
-              UI.showResults({ ...GameEngine.calculateResults(log.time_taken || 60) });
-            } else {
-              // No previous game today or explicitly allowed to play
-              GameBridge.launch();
-            }
+            });
           },
-          () => {
-            // In Test Mode, always show register page first so they can edit name as requested
-            if (State.isTestMode || !res.UserName || res.UserName === 'Test') {
-              if (res.UserName) State.userName = res.UserName;
-              UI.showScreen('register');
-            } else {
-              State.userName = res.UserName;
-              GameBridge.launch();
-            }
-          }
-        );
+          () => console.log('[VerifyOTP] Permission confirmed.')
+        ).catch(e => console.warn('[VerifyOTP] Background check failed:', e));
       } catch (e) { alert('Verification Failed: ' + e.message); }
       finally { UI.setLoading(false); }
     };
@@ -2165,29 +2418,62 @@ If you think you can even come close to my scorecard, pick up the Times of India
     OTPManager.setupBoxes();
 
     // --- Share & Misc ---
-    document.getElementById('share-btn').onclick = () => ShareManager.handle();
-    document.getElementById('expired-home-btn').onclick = () => UI.showScreen('splash');
-    document.getElementById('replay-btn').onclick = () => GameBridge.launch();
-    document.getElementById('edit-name-test-btn').onclick = () => {
-      if (State.userName) document.getElementById('name-input').value = State.userName;
-      UI.showScreen('register');
-    };
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) shareBtn.onclick = () => ShareManager.handle();
+
+
 
     // ─────────────────────────────────────────────────────────
     // 11. INITIALIZATION
     // ─────────────────────────────────────────────────────────
     GameBridge.init();
 
+
+
     // Check URL parameters on load
     const isValidLink = Utils.initQueryParams();
+
     if (!isValidLink) {
       UI.showScreen('expired');
-    } else {
-      UI.showScreen('splash');
+      // STOP EVERYTHING: Do not proceed to login or splash
+      throw new Error('Unauthorized Access Blocked');
     }
 
-    State.gameId = Utils.getTodayId();
+    UI.showScreen('splash');
 
+    const initSaved = Utils.session.load();
+    if (initSaved) {
+      State.session = initSaved;
+      State.userName = initSaved.name || 'Player';
+
+      // Initialize timer from persistence immediately to prevent resets
+      try {
+        const savedStr = localStorage.getItem(CONFIG.TIMER_STATE_KEY);
+        if (savedStr) {
+          const saved = JSON.parse(savedStr);
+          const todayId = Utils.getTodayId();
+          if (saved.dayId === todayId && saved.timeLeft > 0) {
+            console.log(`[Init] Restoring timer state: ${saved.timeLeft}s`);
+            State.timeLeft = saved.timeLeft;
+          }
+        }
+      } catch (e) { console.warn('[Init] Timer restore failed:', e); }
+
+      GameBridge.warmUp();
+    }
+
+    // --- Standalone QA Panel (Only in Test Viewer) ---
+    const qaDiv = document.createElement('div');
+    qaDiv.id = 'qa-panel';
+    qaDiv.style = "position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,0.95); color:white; padding:12px; z-index:9999; display:flex; gap:10px; font-family:monospace; font-size:10px; border-top:3px solid #9d071c; flex-wrap:wrap; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);";
+    qaDiv.innerHTML = `
+      <div style="width:100%; color:#F17660; font-weight:bold; margin-bottom:5px; font-size:12px;">TEST VIEWER TOOLS:</div>
+      <button onclick="window.postMessage({type:'READY'}, '*')" style="background:#540000; color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Simulate READY</button>
+      <button onclick="GameEngine.onExpire()" style="background:#540000; color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Force Expire</button>
+      <button onclick="GameEngine.onComplete({score:40, timeTaken:15})" style="background:#540000; color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Force Win</button>
+      <button onclick="localStorage.clear(); sessionStorage.clear(); window.location.reload();" style="background:#9d071c; color:white; border:1px solid rgba(255,255,255,0.3); padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Reset Cache</button>
+    `;
+    document.body.appendChild(qaDiv);
   </script>
 
 </body>

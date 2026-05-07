@@ -12,17 +12,9 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-:: Stage important files only (avoiding temporary copies)
+:: Stage all files (honoring .gitignore)
 echo [INFO] Staging files...
-git add index.html
-git add Run_Local.bat
-git add project_overview.md
-git add flippit_documentation.md
-git add api_specification.md
-git add TECHNICAL_QA.md
-git add Push_to_GitHub.bat
-git add index_production_6box.html
-git add index_production.html
+git add .
 
 echo [INFO] PRE-PUSH CHECK: Console logs are auto-silenced in index.html (non-test mode).
 echo [INFO] Ensure all debug alert() calls are removed before proceeding.

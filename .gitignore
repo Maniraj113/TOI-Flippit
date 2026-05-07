@@ -1,0 +1,26 @@
+# Folders to ignore
+Archieve/
+Versions/
+Old design/
+Test New Design/
+1.Testing/
+Approved Slide/
+Documentation/
+Screenshots/
+scratch/
+
+# Files to ignore
+Versions.zip
+*.log
+.DS_Store
+Thumbs.db
+
+# Keep current critical files
+!index.html
+!index_production.html
+!index_production_6box.html
+!main.css
+!handler.js
+!Run_Local.bat
+!Push_to_GitHub.bat
+!*.md

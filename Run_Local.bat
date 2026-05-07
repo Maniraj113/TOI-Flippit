@@ -15,10 +15,16 @@ if %errorlevel% neq 0 (
 
 echo [1] Launch Local Version (index.html)
 echo [2] Launch Production Version (index_production.html)
-set /p choice="Select version (1/2): "
+echo [3] Launch 6-Box Production Version (index_production_6box.html)
+echo [4] Launch Test Interface (index_test_viewer.html)
+set /p choice="Select version (1/2/3/4): "
 
 if "%choice%"=="2" (
     set "TARGET=index_production.html"
+) else if "%choice%"=="3" (
+    set "TARGET=index_production_6box.html"
+) else if "%choice%"=="4" (
+    set "TARGET=index_test_viewer.html"
 ) else (
     set "TARGET=index.html"
 )
@@ -34,7 +40,7 @@ set /p scenario="Select scenario (1/2/3): "
 for /f "tokens=*" %%a in ('powershell -Command "Get-Date -Format 'yyyyMMdd'"') do set "YYYYMMDD=%%a"
 
 if "%scenario%"=="1" (
-    set "QUERY=city=Mumbai&date=!YYYYMMDD!"
+    set "QUERY=code=Mumbai&date=!YYYYMMDD!"
     echo [INFO] Simulation: VALID ACCESS
 )
 if "%scenario%"=="2" (
@@ -42,7 +48,7 @@ if "%scenario%"=="2" (
     echo [INFO] Simulation: ACCESS DENIED (No params)
 )
 if "%scenario%"=="3" (
-    set "QUERY=city=Mumbai&date=20240101"
+    set "QUERY=code=Mumbai&date=20240101"
     echo [INFO] Simulation: LINK EXPIRED (Past date)
 )
 

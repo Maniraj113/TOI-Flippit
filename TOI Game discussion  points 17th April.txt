@@ -1,27 +1,28 @@
+http://localhost:3000/?city=chn&date=21042026
 
-Beat the clock is missing in landing page
+src="https://bccl.in/wp-content/uploads/2026/03/logo.png" - logo 
 
-Change number should be icon in otp page
 
-button color should be brown color in all the screens
+lets start - there should be curve - need border radius details.
 
-you might just make it to the pages of TOI in the name page
+remove the space in all buttons. it should be end to end text alone and slightly curved
 
-Game link : https://cdn-in.amuselabs.com/nexus/date-picker?idx=1&set=nexus-toi-synant-puzzles
+Share curve is okay 
 
-ACTULA OTP is not coming
+gotham font medium & body - difference
 
-how the data is coming from api - need to investigate
+remove the space between number and icon
 
-try another should not be visible in trophy page
+confetti is not required - instead clap or hifi
 
-all text are required in trophy page in mobile but shared card should not show the text
+expired message should be in red color. clock should be big
 
-both bottom & top msges based on time solved. 
+share card image size should be smaller. 
 
-Name should be editable. 
 
-identify all api and its results. 
+There is delay while opening in iphone. 
 
-Name & location.
+
+remove how to play in expired screen
+
 

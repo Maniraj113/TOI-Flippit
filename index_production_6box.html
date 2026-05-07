@@ -12,12 +12,17 @@
 
   <!-- Critical CSS: Applied at the absolute top of head to eliminate "white flash" -->
   <style>
-    html, body {
+    html,
+    body {
       background-color: #9d071c !important;
       margin: 0;
       padding: 0;
     }
-    #app-shell { opacity: 1; transition: opacity 0.2s ease; }
+
+    #app-shell {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
   </style>
 
   <!-- Resource Hints -->
@@ -25,7 +30,8 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
   <!-- Preload Critical Assets -->
-  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/GothamBook_2.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/GothamBook_2.ttf" as="font" type="font/ttf"
+    crossorigin>
   <link rel="preload" href="https://bccl.in/wp-content/uploads/2026/04/FLIPPEDIT-Logo-Final-01.png" as="image">
 
   <!-- html2canvas for share card: Added 'defer' to prevent parser blocking -->
@@ -505,7 +511,8 @@
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative; /* Ensure overlay can be absolute */
+      position: relative;
+      /* Ensure overlay can be absolute */
     }
 
     #game-frame {
@@ -648,41 +655,36 @@
     }
 
     .result-msg-top {
-      font-size: 20px;
-      font-weight: 900;
+      font-size: 19px;
+      font-weight: 700;
       color: var(--brand-brown);
       margin: 40px 0 30px;
       font-family: var(--font-heading);
       text-align: center;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.02em;
     }
 
     .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
       width: 100%;
       max-width: 280px;
       justify-content: center;
-      margin: 0 auto 35px auto;
+      margin: 0 auto 10px auto;
     }
 
     .stat-group {
       display: flex;
       flex-direction: column;
       align-items: center;
+      flex: 1;
       gap: 6px;
-    }
-
-    .stat-icon-up {
-      font-size: 26px;
-      line-height: 1;
-      height: 30px;
     }
 
     .stat-tile {
       background: var(--brand-brown);
-      padding: 10px 12px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -692,21 +694,60 @@
       width: 100%;
       box-sizing: border-box;
       white-space: nowrap;
-      border-radius: 8px !important; /* Uniform border radius for grid */
+    }
+
+    .stat-group:first-child .stat-tile {
+      border-radius: 6px 2px 2px 6px;
+    }
+
+    .stat-group:last-child .stat-tile {
+      border-radius: 2px 6px 6px 2px;
+    }
+
+    /* Support for 3 columns in share card */
+    .stat-group:nth-child(2):not(:last-child) .stat-tile {
+      border-radius: 2px;
     }
 
     .stat-label-small {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 500;
       font-family: var(--font-body);
-      opacity: 0.9;
+      opacity: 0.95;
       margin-bottom: 2px;
+      text-transform: none;
+    }
+
+    .stat-value-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .stat-icon-inline {
+      font-size: 18px;
+      line-height: 1;
     }
 
     .stat-value-large {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       font-family: var(--font-body);
+      line-height: 1.2;
+    }
+
+    /* Special style for Live Streak box */
+    .streak-highlight {
+      background: var(--brand-salmon);
+      color: var(--brand-brown);
+      padding: 1px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 900;
+      font-size: 13px;
     }
 
     .result-msg-bottom {
@@ -849,8 +890,8 @@
     }
 
 
-    /* Expired screen message (JS-injected) - Matched to Result Msg Bottom */
-    #expired-message {
+    /* Reusable Status/Error Message Styling */
+    .status-message {
       color: var(--brand-brown);
       font-size: 14px;
       font-weight: 700;
@@ -859,6 +900,19 @@
       font-family: var(--font-body);
       max-width: 220px;
       margin: 0 auto;
+    }
+
+    .status-message h3 {
+      color: var(--brand-red);
+      font-size: 14px;
+      margin-bottom: 4px;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+    }
+
+    .status-message p {
+      margin: 0;
+      font-size: 14px;
     }
 
 
@@ -954,66 +1008,98 @@
       letter-spacing: -0.01em !important;
     }
 
-    .cap-stats-group {
+    .cap-stats-grid {
       position: absolute !important;
-      top: 280px !important;
-      left: 46px !important;
-      width: 260px !important;
-      display: grid !important;
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 12px !important;
+      top: 320px !important;
+      left: 20px !important;
+      width: 310px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
     }
 
-    .cap-stat-wrapper {
+    .cap-stats-row {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 4px !important;
+      width: 100% !important;
+    }
+
+    .cap-stat-group {
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important;
-      width: 124px !important;
-    }
-
-    .cap-icon-wrap {
-      font-size: 32px !important;
-      margin-bottom: 8px !important;
-      height: 40px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
+      flex: 1 !important;
     }
 
     .cap-stat-box {
       width: 100% !important;
-      height: 70px !important;
       background: #540000 !important;
       color: #FFFFFF !important;
-      padding: 10px !important;
+      padding: 8px 10px !important;
       text-align: left !important;
       box-sizing: border-box !important;
-      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      white-space: nowrap !important;
+    }
+
+    .cap-stat-group:first-child .cap-stat-box {
+      border-radius: 6px 2px 2px 6px !important;
+    }
+
+    .cap-stat-group:last-child .cap-stat-box {
+      border-radius: 2px 6px 6px 2px !important;
+    }
+
+    .cap-stat-group:nth-child(2):not(:last-child) .cap-stat-box {
+      border-radius: 2px !important;
     }
 
     .cap-label {
       display: block !important;
-      font-size: 12px !important;
+      font-size: 11px !important;
       font-weight: 500 !important;
-      margin-bottom: 2px !important;
-      opacity: 0.9 !important;
+      opacity: 0.8 !important;
       color: #FFFFFF !important;
+      margin-bottom: 2px !important;
+    }
+
+    .cap-value-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      width: 100% !important;
+    }
+
+    .cap-icon {
+      font-size: 14px !important;
     }
 
     .cap-value {
-      display: block !important;
-      font-size: 18px !important;
+      font-size: 14px !important;
       font-weight: 700 !important;
       color: #FFFFFF !important;
     }
 
+    /* Special style for Share Card Live Streak */
+    .cap-streak-highlight {
+      background: #F17660 !important;
+      color: #540000 !important;
+      padding: 1px 4px !important;
+      border-radius: 3px !important;
+      font-weight: 900 !important;
+      font-size: 12px !important;
+    }
+
     .cap-date {
       position: absolute !important;
-      bottom: 20px !important;
+      top: 486px !important;
       left: 0 !important;
       width: 352px !important;
       color: #540000 !important;
-      font-size: 20px !important;
+      font-size: 24px !important;
       font-weight: 700 !important;
       text-align: center !important;
     }
@@ -1087,6 +1173,7 @@
     }
   </style>
 </head>
+
 <body style="background-color: #9d071c;">
   <div id="app-shell">
 
@@ -1104,50 +1191,66 @@
           <div class="cap-player-name" id="cc-name-node">&nbsp;</div>
           <div class="cap-achievement">FLIPPED IT TODAY</div>
 
-          <div class="cap-stats-group">
-            <div class="cap-stat-wrapper">
-              <div class="cap-icon-wrap">⏱️</div>
-              <div class="cap-stat-box">
-                <div class="cap-label">Your Score</div>
-                <div class="cap-value"><span id="cc-time-node">0</span> secs</div>
+          <div class="cap-stats-grid">
+            <!-- Row 1: 3 columns -->
+            <div class="cap-stats-row">
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Your Score</div>
+                  <div class="cap-value-row">
+                    <span class="cap-icon">⏱️</span>
+                    <span class="cap-value"><span id="cc-time-node">0</span>secs</span>
+                  </div>
+                </div>
               </div>
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Your Score</div>
+                  <div class="cap-value-row">
+                    <span class="cap-icon">⭐</span>
+                    <span class="cap-value"><span id="cc-score-node">0</span>/100</span>
+                  </div>
+                </div>
+              </div>
+              <!-- 6-BOX EXTRA: Total Flip column -->
+              <!--
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Total Flip</div>
+                  <div class="cap-value"><span id="cc-total-flips-node">0</span></div>
+                </div>
+              </div>
+              -->
             </div>
 
-            <div class="cap-stat-wrapper">
-              <div class="cap-icon-wrap">⭐</div>
-              <div class="cap-stat-box">
-                <div class="cap-label">Your Score</div>
-                <div class="cap-value"><span id="cc-score-node">0</span>/100</div>
+            <!-- 6-BOX EXTRA: Row 2 (Win Rate, Streaks) -->
+            <!--
+            <div class="cap-stats-row">
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Win</div>
+                  <div class="cap-value"><span id="cc-win-rate-node">0</span>%</div>
+                </div>
+              </div>
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Live Streak</div>
+                  <div class="cap-value-row">
+                    <span class="cap-streak-highlight"><span id="cc-streak-node">0</span> 🔥🔥</span>
+                  </div>
+                </div>
+              </div>
+              <div class="cap-stat-group">
+                <div class="cap-stat-box">
+                  <div class="cap-label">Best Streak</div>
+                  <div class="cap-value-row">
+                    <span class="cap-value" id="cc-best-streak-node">0</span>
+                    <span class="cap-icon">🔥</span>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div class="cap-stat-wrapper">
-              <div class="cap-stat-box">
-                <div class="cap-label">Total Flip</div>
-                <div class="cap-value"><span id="cc-total-flips-node">0</span></div>
-              </div>
-            </div>
-
-            <div class="cap-stat-wrapper">
-              <div class="cap-stat-box">
-                <div class="cap-label">Win</div>
-                <div class="cap-value"><span id="cc-win-rate-node">0</span>%</div>
-              </div>
-            </div>
-
-            <div class="cap-stat-wrapper">
-              <div class="cap-stat-box">
-                <div class="cap-label">Live Streak</div>
-                <div class="cap-value"><span id="cc-streak-node">0</span> 🔥🔥</div>
-              </div>
-            </div>
-
-            <div class="cap-stat-wrapper">
-              <div class="cap-stat-box">
-                <div class="cap-label">Best Streak</div>
-                <div class="cap-value"><span id="cc-best-streak-node">0</span> 🔥</div>
-              </div>
-            </div>
+            -->
           </div>
 
           <div class="cap-date" id="cc-date-node">23/04/2026</div>
@@ -1192,6 +1295,11 @@
         <div class="splash-actions fade-in" id="splash-actions">
           <button id="start-btn" class="btn-primary">LET'S START</button>
           <button class="btn-how" id="how-btn">HOW TO PLAY</button>
+          <!-- Temporary Clear Cache button for testing -->
+          <button onclick="localStorage.clear(); sessionStorage.clear(); location.reload();"
+            style="margin-top:20px; background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.4); font-size:9px; padding:4px 8px; border-radius:4px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em;">
+            Reset App (Testing Only)
+          </button>
         </div>
       </div>
     </div>
@@ -1238,11 +1346,11 @@
             </div>
             <div id="otp-container" style="display:flex; justify-content:center; gap:8px; margin-bottom:12px;">
               <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
-              <input type="text" class="otp-box" maxlength="1" inputmode="numeric">
-              <input type="text" class="otp-box" maxlength="1" inputmode="numeric">
-              <input type="text" class="otp-box" maxlength="1" inputmode="numeric">
-              <input type="text" class="otp-box" maxlength="1" inputmode="numeric">
-              <input type="text" class="otp-box" maxlength="1" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+              <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+              <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+              <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+              <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
             </div>
 
             <div id="resend-countdown"
@@ -1283,20 +1391,17 @@
     <!-- ═════════════════════ SCREEN - GAME AREA ═════════════════════ -->
     <div id="screen-game" class="screen">
       <div class="playing-as-bar">PLAYING AS: <span id="playing-as-name"></span></div>
-      <div class="game-iframe-wrap">
-        <div class="game-iframe-card">
-          <!-- Premium Loading Overlay for the Iframe itself -->
-          <div id="iframe-loading-overlay">
-            <div class="spinner"></div>
-            <p>Loading puzzle...</p>
-            <p id="iframe-timeout-msg">Taking longer than usual. Please check your connection.</p>
-          </div>
-
-          <iframe id="game-frame" title="Flippit Game" allowfullscreen
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" scrolling="no"></iframe>
+      <div id="game-container" class="game-iframe-wrap">
+        <div id="iframe-loading-overlay">
+          <div class="spinner"></div>
+          <p style="margin-top:20px; color:white; font-size:14px; opacity:0.8;">Loading puzzle...</p>
+          <p id="iframe-timeout-msg" style="display:none; color:white; font-size:12px; margin-top:10px;">Taking longer than expected...</p>
         </div>
+        <iframe id="game-frame" class="game-iframe-card" title="Flippit Game" allowfullscreen
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" scrolling="no"></iframe>
       </div>
     </div>
+
 
     <!-- ═════════════════════ SCREEN - RESULTS ═════════════════════ -->
     <div id="screen-result" class="screen">
@@ -1307,57 +1412,76 @@
           alt="TOI Logo">
 
         <div class="result-card">
-          <button class="btn-close-result" id="result-close-btn">&times;</button>
+          <!-- Removed close button as per user request -->
+
 
           <!-- e.g. "You nailed it!" -->
           <div class="result-msg-top" id="result-msg-top">Mission Accomplished!</div>
 
-          <!-- Stats: icon above each dark tile -->
+          <!-- Stats: internal labels and values -->
           <div class="stats-grid">
             <div class="stat-group">
-              <div class="stat-icon-up">⏱️</div>
               <div class="stat-tile">
                 <div class="stat-label-small">Your Score</div>
-                <div class="stat-value-large"><span id="r-time">0</span>secs</div>
+                <div class="stat-value-row">
+                  <span class="stat-icon-inline">⏱️</span>
+                  <span class="stat-value-large"><span id="r-time">0</span>secs</span>
+                </div>
               </div>
             </div>
-
             <div class="stat-group">
-              <div class="stat-icon-up">⭐</div>
               <div class="stat-tile">
                 <div class="stat-label-small">Your Score</div>
-                <div class="stat-value-large"><span id="r-score">0</span>/100</div>
+                <div class="stat-value-row">
+                  <span class="stat-icon-inline">⭐</span>
+                  <span class="stat-value-large"><span id="r-score">0</span>/100</span>
+                </div>
               </div>
             </div>
+          </div>
 
+          <!-- 6-BOX EXTRA: Middle Stats Grid -->
+          <!--
+          <div class="stats-grid">
             <div class="stat-group">
               <div class="stat-tile">
                 <div class="stat-label-small">Total Flip</div>
                 <div class="stat-value-large" id="r-total-flips">0</div>
               </div>
             </div>
-
             <div class="stat-group">
               <div class="stat-tile">
                 <div class="stat-label-small">Win</div>
                 <div class="stat-value-large"><span id="r-win-rate">0</span>%</div>
               </div>
             </div>
+          </div>
+          -->
 
+          <!-- 6-BOX EXTRA: Bottom Stats Grid -->
+          <!--
+          <div class="stats-grid">
             <div class="stat-group">
               <div class="stat-tile">
                 <div class="stat-label-small">Live Streak</div>
-                <div class="stat-value-large" id="r-streak">0 🔥🔥</div>
+                <div class="stat-value-row">
+                  <div class="streak-highlight">
+                    <span id="r-streak">0</span> 🔥🔥
+                  </div>
+                </div>
               </div>
             </div>
-
             <div class="stat-group">
               <div class="stat-tile">
                 <div class="stat-label-small">Best Streak</div>
-                <div class="stat-value-large" id="r-best-streak">0 🔥</div>
+                <div class="stat-value-row">
+                  <span class="stat-value-large" id="r-best-streak">0</span>
+                  <span class="stat-icon-inline">🔥</span>
+                </div>
               </div>
             </div>
           </div>
+          -->
 
           <!-- Bottom message e.g. "Well, played! A fresh flip awaits..." -->
           <div class="result-msg-bottom" id="result-msg-bottom"></div>
@@ -1384,14 +1508,15 @@
           alt="TOI Logo">
 
         <div class="result-card" style="min-height:350px; justify-content:center; padding:36px 28px;">
-          <button class="btn-close-result" id="expired-close-btn">&times;</button>
+          <!-- Removed close button as per user request -->
+
 
           <!-- v9.0: High-Fidelity "Flipped It" Alarm Clock (100% Design Match) -->
           <img class="expired-icon" src="https://bccl.in/wp-content/uploads/2026/04/timer.png" alt="Time's Up Timer">
 
 
           <!-- Final Campaign Copy -->
-          <div id="expired-message">
+          <div id="expired-message" class="status-message">
             <!-- Random message populated by JS -->
           </div>
         </div>
@@ -1494,7 +1619,8 @@
       isLaunching: false,
       isPuzzleReady: false,      // Track if AmuseLabs LOAD actually fired
       isRedirected: false,       // Track if we redirected away during checkDailyLock
-      iframeTimeoutHandle: null  // Timer handle for the 15s warning
+      iframeTimeoutHandle: null, // Timer handle for the 15s warning
+      fallbackTimerHandle: null  // Timer handle for the 3s READY fallback
     };
 
     // ─────────────────────────────────────────────────────────
@@ -1531,11 +1657,18 @@
         return res.json();
       },
 
+      /** Helper to resolve correct user_id (preferring UUID/hash_id) */
+      getPersistentUserId() {
+        // Returns the UUID/hash_id as a string. 
+        // This is crucial because index (9).html confirms the backend accepts the raw UUID string.
+        return String(State.session?.hash_id || State.session?.id || '');
+      },
+
       /** Save game result to backend */
       async saveGame(data, token) {
         // Log payload for debugging
         console.log('[API] Saving game...', { ...data, g_id: data.g_id });
-        
+
         await OfflineManager.flush();
         try {
           const res = await fetch(`${CONFIG.API_BASE}/save-game`, {
@@ -1543,13 +1676,13 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify(data)
           });
-          
+
           if (!res.ok) {
             const errorBody = await res.text();
             console.error(`[API] Save failed (HTTP ${res.status}):`, errorBody);
             throw new Error(`HTTP ${res.status}: ${errorBody}`);
           }
-          
+
           const result = await res.json();
           console.log('[API] Save successful:', result);
           return result;
@@ -1567,7 +1700,7 @@
         const res = await fetch(`${CONFIG.API_BASE}/user/${userId}`, { headers });
         if (!res.ok) {
           if (res.status === 401) throw new Error('Unauthorized');
-          if (res.status === 404) return { gameLogs: [] };
+          if (res.status === 404) throw new Error('UserNotFound');
           throw new Error(`HTTP ${res.status}`);
         }
         return res.json();
@@ -1601,15 +1734,15 @@
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenToUse}` },
               body: JSON.stringify(item.data)
             });
-            
+
             // If unauthorized and we have a newer token, try once with the current one
             if (res.status === 401 && currentToken && currentToken !== item.token) {
-               const retryRes = await fetch(`${CONFIG.API_BASE}/save-game`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-                  body: JSON.stringify(item.data)
-               });
-               if (!retryRes.ok) throw new Error();
+              const retryRes = await fetch(`${CONFIG.API_BASE}/save-game`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
+                body: JSON.stringify(item.data)
+              });
+              if (!retryRes.ok) throw new Error();
             } else if (!res.ok) {
               throw new Error();
             }
@@ -1741,66 +1874,66 @@
       initQueryParams() {
         try {
           const params = new URLSearchParams(window.location.search);
-          const cityParam = params.get('city') || params.get('c');
+          const codeParam = params.get('code') || params.get('c');
           const dateParam = params.get('date') || params.get('d');
-          let isValid = false;
-          let expiryReason = '';
 
           const todayIST = this.getISTDateString();
           const validationKey = `flippit_valid_${todayIST}`;
+          const hasParams = params.has('code') || params.has('date') || params.has('c') || params.has('d');
 
-          // 1. Check if we already validated this today
-          if (!cityParam && !dateParam) {
-             try {
-                const storedStatus = localStorage.getItem(validationKey);
-                if (storedStatus === 'true') {
-                   console.log('[Utils] Access granted via persistence');
-                   return true; 
-                }
-             } catch (e) { console.warn('Storage blocked'); }
-          }
+          let isValid = false;
+          let expiryReason = null;
 
-          // 2. Validate fresh parameters
-          if (cityParam && dateParam) {
-            State.city = cityParam.toUpperCase();
+          // 1. If we have params, we MUST validate them (Strict Mode)
+          if (hasParams) {
             let normalizedDate = dateParam;
-            if (/^\d{8}$/.test(dateParam)) {
-              if (dateParam.startsWith('20')) {
-                normalizedDate = `${dateParam.slice(0, 4)}-${dateParam.slice(4, 6)}-${dateParam.slice(6, 8)}`;
-              } else {
-                normalizedDate = `${dateParam.slice(4, 8)}-${dateParam.slice(2, 4)}-${dateParam.slice(0, 2)}`;
-              }
+            if (dateParam && /^\d{8}$/.test(dateParam)) {
+              normalizedDate = `${dateParam.substring(0, 4)}-${dateParam.substring(4, 6)}-${dateParam.substring(6, 8)}`;
             }
-            State.qrDate = normalizedDate;
-            
-            if (normalizedDate === todayIST) {
-              isValid = true;
-              try { localStorage.setItem(validationKey, 'true'); } catch (e) {}
+
+            if (codeParam && normalizedDate) {
+              State.city = codeParam.toUpperCase();
+              State.qrDate = normalizedDate;
+
+              if (normalizedDate === todayIST) {
+                isValid = true;
+                try { localStorage.setItem(validationKey, 'true'); } catch (e) { }
+              } else {
+                isValid = false;
+                expiryReason = normalizedDate > todayIST ? 'future_link' : 'date_expired';
+                // Security: Wipe ANY existing validation record if they try an invalid link
+                try {
+                  localStorage.removeItem(validationKey);
+                  localStorage.removeItem('flippit_valid'); // Clear legacy keys too
+                } catch (e) { }
+              }
             } else {
               isValid = false;
-              expiryReason = normalizedDate > todayIST ? 'future_link' : 'date_expired';
+              expiryReason = 'missing_params';
+              // Security: Clear state on malformed params
+              try { localStorage.removeItem(validationKey); } catch (e) { }
             }
-          } else {
-             isValid = false;
-             expiryReason = 'missing_params';
+          }
+          // 2. If NO params, strictly show Access Denied
+          else {
+            isValid = false;
+            expiryReason = 'missing_params';
           }
 
           // 3. Setup Error UI if invalid
           if (!isValid) {
             const msgEl = document.getElementById('expired-message');
             if (msgEl) {
-               msgEl.style.color = 'var(--brand-brown)';
-               msgEl.style.textAlign = 'center';
-               if (expiryReason === 'missing_params') {
-                  msgEl.innerHTML = `<h3 style="margin-bottom:10px; font-size:24px;">Access Denied</h3><p style="font-size:16px; line-height:1.4;">This game can only be accessed by scanning the QR code in today's edition of The Times of India.</p>`;
-               } else {
-                  msgEl.innerHTML = `<h3 style="margin-bottom:10px; font-size:24px;">Link Expired</h3><p style="font-size:16px; line-height:1.4;">Looks like you scanned an older QR code. Please scan the QR from today's TOI edition to continue.</p>`;
-               }
+              if (expiryReason === 'missing_params') {
+                msgEl.innerHTML = `<h3>Access Denied</h3><p>This game can only be accessed by scanning the QR code in today's edition of The Times of India.</p>`;
+              } else {
+                msgEl.innerHTML = `<h3>Link Expired</h3><p>Looks like you scanned an older QR code. Please scan the QR from today's TOI edition to continue.</p>`;
+              }
             }
           }
 
           // 4. CLEAN URL (Only if we had params)
-          if (window.history.replaceState && (params.toString().length > 0)) {
+          if (window.history.replaceState && hasParams) {
             const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
           }
@@ -1808,7 +1941,7 @@
           return isValid;
         } catch (globalErr) {
           console.error('Critical Init Error:', globalErr);
-          return false; // Fallback to safe state
+          return false;
         }
       }
     };
@@ -1827,6 +1960,13 @@
           if (err.message === 'Unauthorized') {
             localStorage.removeItem(CONFIG.SESSION_KEY);
             window.location.reload();
+            return;
+          }
+          if (err.message === 'UserNotFound') {
+            localStorage.removeItem(CONFIG.SESSION_KEY);
+            State.session = null;
+            State.userName = '';
+            UI.showScreen('login');
             return;
           }
           // Network failure — fail-open (let them play, avoid locking out) 
@@ -1855,9 +1995,12 @@
           });
           if (pendingLog) {
             const ageMs = Date.now() - new Date(pendingLog.created_at).getTime();
-            if (ageMs > 60000) {
+            if (ageMs > 300000) { // 5 minutes threshold
               todayLog = { ...pendingLog, status: 'expired' };
-              console.log('[DailyLock] Pending game timed out, treating as expired');
+              console.log('[DailyLock] Pending game timed out (>300s), marking as expired');
+              FlippitAPI.saveGame(todayLog, token);
+            } else {
+              console.log('[DailyLock] Fresh pending session found (<300s), allowing continue.');
             }
           }
         }
@@ -1885,27 +2028,29 @@
         // Ensure even a slow win gets at least some points if they completed it
         if (scoreVal <= 0 && timeSpent <= 60) scoreVal = Math.min(40, Number(rawScore) || 1);
 
-        // Calculate total flips and win rate
+        // 6-BOX EXTRA: Calculate total flips and win rate
+        /*
         const total = (apiLogs || []).length + 1;
         const wins = (apiLogs || []).filter(l => (l.status || '').toLowerCase().includes('complete') || (l.status || '').toLowerCase().includes('success')).length + 1;
         const winRate = total > 0 ? Math.round((wins / total) * 100) : 100;
+        */
 
-        // --- Time-Tiered Top Messages (7 bands) ---
+        // --- Time-Tiered Top Messages (Editorial Polished) ---
         let msgTopOptions;
         if (timeSpent < 10) {
-          msgTopOptions = ["Fastest fingers in town.", "Blink and you're done.", "Quick thinking. Quicker finish."];
+          msgTopOptions = ["Fastest Fingers in Town", "Blink and You're Done", "Quick Thinking. Quicker Finish."];
         } else if (timeSpent < 15) {
-          msgTopOptions = ["You\u2019re on fire.", "Rapid\u2014and razor sharp."];
+          msgTopOptions = ["You're on Fire!", "Rapid and Razor Sharp"];
         } else if (timeSpent < 20) {
-          msgTopOptions = ["You crushed it.", "That came together fast."];
+          msgTopOptions = ["You Crushed It", "That Came Together Fast"];
         } else if (timeSpent < 25) {
-          msgTopOptions = ["Mission accomplished.", "Clean play. Nicely done."];
+          msgTopOptions = ["Mission Accomplished", "Clean Play. Nicely Done."];
         } else if (timeSpent < 30) {
-          msgTopOptions = ["You nailed it.", "Smart finish right there."];
+          msgTopOptions = ["You Nailed It", "Smart Finish!"];
         } else if (timeSpent < 45) {
-          msgTopOptions = ["Thought it through\u2014and flipped it right.", "Nice solve. Took the scenic route."];
+          msgTopOptions = ["Thought it Through", "Nice Solve!"];
         } else {
-          msgTopOptions = ["Just in time\u2014but right on.", "Made the clock work for you."];
+          msgTopOptions = ["Just in Time", "Made the Clock Work"];
         }
         const msgTop = msgTopOptions[Math.floor(Math.random() * msgTopOptions.length)];
 
@@ -1922,8 +2067,8 @@
         return {
           score: scoreVal,
           timeTaken: timeSpent,
-          totalFlips: total,
-          winRate: winRate,
+          // totalFlips: total,
+          // winRate: winRate,
           streak: 1, // Updated by stats
           bestStreak: 1,
           rank: Utils.getRank(scoreVal),
@@ -1957,8 +2102,8 @@
         // Save expired status to backend
         if (State.session && State.session.token) {
           const payload = {
-            g_id: Utils.getTodayId(), // Always use canonical date ID
-            user_id: Number(State.session.id),
+            g_id: State.gameId || Utils.getTodayId(),
+            user_id: FlippitAPI.getPersistentUserId(),
             time_taken: CONFIG.MAX_TIME,
             score: 0,
             status: 'expired',
@@ -1983,24 +2128,26 @@
         // Fetch latest stats to get accurate totalFlips, winRate, streak
         let apiLogs = [];
         let apiStreak = 1;
+        let apiBestStreak = 1;
         if (State.session && State.session.token) {
           try {
             const statsRes = await FlippitAPI.getUserStats(State.session.id, State.session.token);
             apiLogs = statsRes.gameLogs || statsRes.data?.gameLogs || statsRes.logs || [];
             apiStreak = Number(statsRes.streak) || 1;
+            apiBestStreak = Number(statsRes.bestStreak || statsRes.best_streak) || apiStreak;
           } catch (e) { console.warn('[onComplete] Could not fetch stats:', e); }
         }
 
         const results = this.calculateResults(rawTime, apiLogs, data.score || 0);
         results.streak = apiStreak;
-        results.bestStreak = Number(results.bestStreak) || apiStreak;
+        results.bestStreak = apiBestStreak;
         State.score = results;
 
         // Save to backend (use canonical date ID)
         if (State.session && State.session.token) {
           const payload = {
-            g_id: Utils.getTodayId(),
-            user_id: Number(State.session?.id || 0),
+            g_id: State.gameId || Utils.getTodayId(),
+            user_id: FlippitAPI.getPersistentUserId(),
             time_taken: Number(results.timeTaken) || 60,
             score: Number(results.score) || 0,
             status: 'completed',
@@ -2016,10 +2163,13 @@
 
       /** Timer controllers */
       startTimer() {
+        // Prevent double-starting or resetting if timer is already active
+        if (State.timer) return;
+
         State.isComplete = false;
         this.stopTimer();
 
-        // 1. Sync from current state (which was initialized on page load)
+        // 1. Initial UI update
         UI.updateTimer(State.timeLeft);
 
         // 2. Start the ticking interval
@@ -2071,6 +2221,20 @@
         genericHeader.style.display = isAuth ? 'flex' : 'none';
 
         State.currentScreen = name;
+
+        if (isGame) {
+          const nameEl = document.getElementById('playing-as-name');
+          if (nameEl) nameEl.textContent = State.userName || 'Player';
+        }
+
+        // Immediate population for Expired screen to prevent lag, but respect existing 'Access Denied'
+        if (name === 'expired') {
+          const msgEl = document.getElementById('expired-message');
+          // Only set the random expire message if the element is empty or contains the default placeholder
+          if (msgEl && (!msgEl.innerHTML || msgEl.innerHTML.includes('...'))) {
+            msgEl.textContent = GameEngine.getExpireMessage();
+          }
+        }
       },
 
       /** Show/hide loading spinner */
@@ -2088,12 +2252,21 @@
 
       /** Populate result screen with data */
       showResults(data) {
-        const name = State.userName || 'Player';
+        // Date formatting: e.g. "20th April"
         const now = new Date();
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const day = now.getDate();
+        const suffix = (day === 1 || day === 21 || day === 31) ? 'st' : (day === 2 || day === 22) ? 'nd' : (day === 3 || day === 23) ? 'rd' : 'th';
+        const formattedDate = `${day}${suffix} ${months[now.getMonth()]}`;
+
+        const name = State.userName || 'Player';
+        const monthsS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
         // Update Share Card
         const ccName = document.getElementById('cc-name-node');
-        if (ccName) ccName.textContent = name.toUpperCase();
+        if (ccName) {
+          ccName.textContent = name.toUpperCase();
+        }
 
         const dd = String(now.getDate()).padStart(2, '0');
         const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -2105,22 +2278,26 @@
         document.getElementById('result-msg-top').textContent = data.msgTop;
         document.getElementById('result-msg-bottom').textContent = data.msgBottom;
 
-        // Populating 6 boxes in Result Screen
+        // 6-BOX POPULATION (Disabled for 2-box live)
         document.getElementById('r-time').textContent = data.timeTaken;
         document.getElementById('r-score').textContent = data.score;
+        /*
         document.getElementById('r-total-flips').textContent = data.totalFlips;
         document.getElementById('r-win-rate').textContent = data.winRate;
-        document.getElementById('r-streak').textContent = `${data.streak} 🔥🔥`;
-        document.getElementById('r-best-streak').textContent = `${data.bestStreak} 🔥`;
+        document.getElementById('r-streak').textContent = data.streak;
+        document.getElementById('r-best-streak').textContent = data.bestStreak;
+        */
 
-        // Populating 6 boxes in Share Card
+        // Populating 6 boxes in Share Card (Disabled extra for 2-box live)
         const ccMaps = {
           'cc-time-node': data.timeTaken,
           'cc-score-node': data.score,
+          /*
           'cc-total-flips-node': data.totalFlips,
           'cc-win-rate-node': data.winRate,
           'cc-streak-node': data.streak,
           'cc-best-streak-node': data.bestStreak
+          */
         };
         Object.keys(ccMaps).forEach(id => {
           const el = document.getElementById(id);
@@ -2128,6 +2305,7 @@
         });
 
         this.showScreen('result');
+
         ShareManager.prepare();
       },
 
@@ -2229,14 +2407,12 @@
           } catch { data = { raw: event.data }; }
           if (!data) return;
 
-          const type = String(data.type || data.event || data.data?.type || '').toUpperCase();
+          const type = String(data.type || data.event || data.data?.type || data.data?.event || '').toUpperCase();
           const progress = String(data.progress || data.data?.progress || '').toUpperCase();
 
+          // 1. PHASE 1: Initial Load (Files are downloaded)
           if (type.includes('LOAD')) {
-            if (State.isRedirected) {
-              console.log('[GameBridge] LOAD received but isRedirected=true — ignoring.');
-              return;
-            }
+            if (State.isRedirected) return;
 
             // Clear timeout warning
             if (State.iframeTimeoutHandle) {
@@ -2244,22 +2420,94 @@
               State.iframeTimeoutHandle = null;
             }
 
-            State.isGameWarm = true; 
-            State.isPuzzleReady = true;
+            State.isGameWarm = true;
+            if (data.id) State.gameId = data.id;
+
+            // TRACKING: Record that the game has started (pending) ONLY NOW that we have the real ID
+            if (State.gameId && State.session && State.session.token) {
+              const payload = {
+                g_id: State.gameId,
+                user_id: FlippitAPI.getPersistentUserId(),
+                score: 0,
+                time_taken: 0,
+                status: 'pending',
+                city: State.city
+              };
+
+              // 1. Save the pending attempt
+              FlippitAPI.saveGame(payload, State.session.token);
+
+              // 2. Check if they have already played this specific puzzle today
+              GameEngine.checkDailyLock(State.session.id, State.session.token,
+                (log, stats) => {
+                  // Immediate hide to prevent flicker
+                  const gameContainer = document.getElementById('screen-game');
+                  if (gameContainer) gameContainer.style.opacity = '0';
+                  UI.setLoading(true);
+
+                  GameBridge.redirectAway(log.status === 'expired' ? 'expired' : 'result', () => {
+                    if (log.status !== 'expired') {
+                      const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+                      UI.showResults({
+                        ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
+                        streak: Number(stats.streak) || 1,
+                        bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
+                      });
+                    }
+                  });
+                },
+                () => {
+                  // Success: Lock check passed, OK to show game
+                  const gameContainer = document.getElementById('screen-game');
+                  if (gameContainer) gameContainer.style.opacity = '1';
+                  console.log('[GameBridge] Puzzle-specific lock check passed.');
+
+                  // Show screen now that we know it's safe
+                  if (State.isLaunching || State.currentScreen === 'game') {
+                    State.isLaunching = false;
+                    UI.showScreen('game');
+
+                    // FALLBACK: If we don't get a "READY" signal in 3 seconds, 
+                    // start the timer anyway as a safety measure.
+                    if (!State.timer) {
+                      State.fallbackTimerHandle = setTimeout(() => {
+                        if (!State.timer && State.currentScreen === 'game') {
+                          console.log('[GameBridge] No READY signal received, starting timer via LOAD fallback.');
+                          GameEngine.startTimer();
+                        }
+                      }, 3000);
+                    }
+                  }
+                }
+              );
+            } else {
+              // No session? Just show the screen (e.g. testing or error state)
+              if (State.isLaunching || State.currentScreen === 'game') {
+                State.isLaunching = false;
+                UI.showScreen('game');
+              }
+            }
 
             const overlay = document.getElementById('iframe-loading-overlay');
             if (overlay) overlay.classList.add('hidden');
-            UI.setLoading(false); 
+            UI.setLoading(false);
+          }
 
-            if (State.isLaunching) {
-              State.isLaunching = false;
-              UI.showScreen('game');
-              // Small rAF delay to ensure layout is painted before timer starts
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  GameEngine.startTimer();
-                });
-              });
+          // 2. PHASE 2: Puzzle Ready (Game is visible and playable)
+          if (type.includes('READY') || type.includes('START')) {
+            State.isPuzzleReady = true;
+            if (data.id) State.gameId = data.id;
+
+            // Clear the fallback timer since we got a real signal
+            if (State.fallbackTimerHandle) {
+              clearTimeout(State.fallbackTimerHandle);
+              State.fallbackTimerHandle = null;
+            }
+
+            if (State.currentScreen === 'game' && !State.timer) {
+              // This is the "True" start point
+              State.timeLeft = CONFIG.MAX_TIME;
+              GameEngine.startTimer();
             }
           }
 
@@ -2297,13 +2545,10 @@
       /** Reveal the warmed-up game or load fresh if needed */
       launch() {
         if (State.isGameWarm && State.isPuzzleReady) {
-          // Already fully loaded — show immediately and start timer
+          // Already fully loaded — show immediately
           UI.showScreen('game');
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              GameEngine.startTimer();
-            });
-          });
+          // We NO LONGER start the timer here. 
+          // We wait for the iframe to send a signal while we are in the 'game' screen.
         } else {
           // Still loading — show overlay and wait for LOAD event
           UI.setLoading(true);
@@ -2325,33 +2570,30 @@
     // ─────────────────────────────────────────────────────────
 
     // --- Start / Splash ---
-    document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('start-btn').addEventListener('click', async () => {
       const saved = Utils.session.load();
       if (!saved) { UI.showScreen('login'); return; }
 
       State.session = saved;
       State.userName = saved.name || 'Player';
 
-      // 1. Optimistic Launch: Start the game immediately
-      console.log('[StartBtn] Optimistic launch triggered...');
-      GameBridge.launch();
-
-      // 2. Background Check: Verify status while game is already loading
-      GameEngine.checkDailyLock(saved.id, saved.token,
+      // CHECK LOCK BEFORE LAUNCHING
+      UI.setLoading(true);
+      await GameEngine.checkDailyLock(saved.id, saved.token,
         (log, stats) => {
-          GameBridge.redirectAway(log.status === 'expired' ? 'expired' : 'result', () => {
-            if (log.status !== 'expired') {
-              const allLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
-              UI.showResults({
-                ...GameEngine.calculateResults(log.time_taken, allLogs, log.score || 0),
-                streak: Number(stats.streak) || 1,
-                bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
-              });
-            }
+          UI.setLoading(false);
+          const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+          UI.showResults({
+            ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
+            streak: Number(stats.streak) || 1,
+            bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
           });
         },
-        () => console.log('[StartBtn] Permission confirmed.')
-      ).catch(err => console.warn('[StartBtn] Background check failed:', err));
+        () => {
+          UI.setLoading(false);
+          GameBridge.launch();
+        }
+      );
     });
 
     // --- How to Play ---
@@ -2388,34 +2630,37 @@
         const res = await FlippitAPI.verifyOtp(p, o);
         if (!res.UserId) throw new Error(res.error || 'Invalid OTP');
 
-        const session = { id: res.UserId, name: res.UserName || '', token: res.token };
-        Utils.session.save(session);
-
+        const session = {
+          id: res.UserId,
+          hash_id: res.HashId || res.hash_id, // Capture UUID if backend provides it
+          name: res.UserName || '',
+          token: res.token
+        };
         // 1. Optimistic Launch after Login
         if (!res.UserName || res.UserName === 'Test') {
           if (res.UserName) State.userName = res.UserName;
+          // Set in-memory session but DO NOT save to localStorage yet (Bug 4 fix)
+          State.session = session;
           UI.showScreen('register');
         } else {
           State.userName = res.UserName;
-          GameBridge.launch();
-        }
+          Utils.session.save(session); // Save to localStorage for existing users
 
-        // 2. Background Lock Check
-        GameEngine.checkDailyLock(session.id, session.token,
-          (log, stats) => {
-            GameBridge.redirectAway(log.status === 'expired' ? 'expired' : 'result', () => {
-              if (log.status !== 'expired') {
-                const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
-                UI.showResults({
-                  ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
-                  streak: Number(stats.streak) || 1,
-                  bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
-                });
-              }
-            });
-          },
-          () => console.log('[VerifyOTP] Permission confirmed.')
-        ).catch(e => console.warn('[VerifyOTP] Background check failed:', e));
+          // CHECK LOCK BEFORE LAUNCHING
+          await GameEngine.checkDailyLock(res.UserId, res.token,
+            (log, stats) => {
+              const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+              UI.showResults({
+                ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
+                streak: Number(stats.streak) || 1,
+                bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
+              });
+            },
+            () => {
+              GameBridge.launch();
+            }
+          );
+        }
       } catch (e) { alert('Verification Failed: ' + e.message); }
       finally { UI.setLoading(false); }
     };
@@ -2426,9 +2671,24 @@
       UI.setLoading(true);
       try {
         await FlippitAPI.saveUser(n, State.session.token);
+        // Save session to localStorage ONLY after successful registration (Bug 4 fix)
         Utils.session.save({ ...State.session, name: n });
         State.userName = n;
-        GameBridge.launch();
+
+        // CHECK LOCK BEFORE LAUNCHING
+        await GameEngine.checkDailyLock(State.session.id, State.session.token,
+          (log, stats) => {
+            const apiLogs = stats.gameLogs || stats.data?.gameLogs || stats.logs || [];
+            UI.showResults({
+              ...GameEngine.calculateResults(log.time_taken, apiLogs, log.score || 0),
+              streak: Number(stats.streak) || 1,
+              bestStreak: Number(stats.bestStreak || stats.best_streak) || 1
+            });
+          },
+          () => {
+            GameBridge.launch();
+          }
+        );
       } catch (e) { alert('Registration Failed: ' + e.message); }
       finally { UI.setLoading(false); }
     };
@@ -2455,9 +2715,9 @@
     OTPManager.setupBoxes();
 
     // --- Share & Misc ---
-    document.getElementById('share-btn').onclick = () => ShareManager.handle();
-    document.getElementById('result-close-btn').onclick = () => UI.showScreen('splash');
-    document.getElementById('expired-close-btn').onclick = () => UI.showScreen('splash');
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) shareBtn.onclick = () => ShareManager.handle();
+
 
 
     // ─────────────────────────────────────────────────────────
@@ -2469,36 +2729,52 @@
 
     // Check URL parameters on load
     const isValidLink = Utils.initQueryParams();
-    
+
     if (!isValidLink) {
       UI.showScreen('expired');
-    } else {
-      UI.showScreen('splash');
+      // STOP EVERYTHING: Do not proceed to login or splash
+      throw new Error('Unauthorized Access Blocked');
     }
 
-    const initSaved = Utils.session.load();
-    if (isValidLink && initSaved) {
-      State.session = initSaved;
-      State.userName = initSaved.name || 'Player';
-      
-      // Initialize timer from persistence immediately to prevent resets
-      try {
-        const savedStr = localStorage.getItem(CONFIG.TIMER_STATE_KEY);
-        if (savedStr) {
-          const saved = JSON.parse(savedStr);
-          const todayId = Utils.getTodayId();
-          if (saved.dayId === todayId && saved.timeLeft > 0) {
-            console.log(`[Init] Restoring timer state: ${saved.timeLeft}s`);
-            State.timeLeft = saved.timeLeft;
-          }
-        }
-      } catch (e) { console.warn('[Init] Timer restore failed:', e); }
+    UI.showScreen('splash');
 
-      GameBridge.warmUp();
+    const initSaved = Utils.session.load();
+    if (initSaved) {
+      // PRO-TIP: Validate session immediately on load to catch "ghost" users early
+      (async () => {
+        try {
+          const stats = await FlippitAPI.getUserStats(initSaved.id, initSaved.token);
+          
+          // Session is valid — update state with freshest data from DB
+          State.session = initSaved;
+          State.userName = stats.user?.user_name || initSaved.name || 'Player';
+          
+          // Initialize timer from persistence immediately to prevent resets
+          try {
+            const savedStr = localStorage.getItem(CONFIG.TIMER_STATE_KEY);
+            if (savedStr) {
+              const saved = JSON.parse(savedStr);
+              const todayId = Utils.getTodayId();
+              if (saved.dayId === todayId && saved.timeLeft > 0) {
+                console.log(`[Init] Restoring timer state: ${saved.timeLeft}s`);
+                State.timeLeft = saved.timeLeft;
+              }
+            }
+          } catch (e) { console.warn('[Init] Timer restore failed:', e); }
+
+          // Note: GameBridge.warmUp() removed to prevent phantom pending records
+        } catch (err) {
+          // 404 = ghost session, 401 = expired token
+          console.warn('[Init] Session invalid, clearing:', err.message);
+          localStorage.removeItem(CONFIG.SESSION_KEY);
+          State.session = null;
+          State.userName = '';
+        }
+      })();
     }
 
     // ─────────────────────────────────────────────────────────
-    State.gameId = Utils.getTodayId();
+    // State.gameId is captured from the iframe LOAD event
 
 
   </script>
